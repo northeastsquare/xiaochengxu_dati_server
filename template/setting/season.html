@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+
+		<meta charset="UTF-8">
+
+		<title>Table</title>
+
+		<link rel="stylesheet" href="/addons/hc_answer/template/plugins/layui/css/layui.css" media="all" />
+
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/global.css" media="all">
+
+		<link rel="stylesheet" type="text/css" href="/addons/hc_answer/template/plugins/font-awesome/css/font-awesome.css">
+
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/table.css" />
+
+	</head>
+
+	<body>
+
+		<div class="admin-main">
+
+
+
+			<blockquote class="layui-elem-quote">
+
+				<a href="javascript:;" class="layui-btn layui-btn-small" id="add">
+
+					<i class="layui-icon">&#xe608;</i> 添加信息
+
+				</a>
+
+				<a href="javascript:;" class="layui-btn layui-btn-small" id="refresh">
+
+					<i class="layui-icon">&#x1002;</i> 刷新
+
+				</a>
+
+			</blockquote>
+
+			<fieldset class="layui-elem-field">
+
+				<legend>赛季列表</legend>
+
+				<div class="layui-field-box">
+
+					<table class="site-table table-hover">
+
+						<thead>
+
+							<tr>
+
+								<th>赛季编号</th>
+
+								<th>赛季名称</th>
+
+								<th>开始时间</th>
+
+								<th>结束时间</th>
+
+								<th>操作</th>
+
+							</tr>
+
+						</thead>
+
+						<tbody>
+
+						</tbody>
+
+					</table>
+
+
+
+				</div>
+
+			</fieldset>
+
+			<div class="admin-table-page">
+
+				<div id="page" class="page">
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<script type="text/javascript" src="/addons/hc_answer/template/plugins/layui/layui.js"></script>
+
+		<script>
+
+			layui.config({
+
+				base: '/addons/hc_answer/template/plugins/layui/modules/'
+
+			});
+
+
+
+			layui.use(['icheck', 'laypage','layer'], function() {
+
+				var $ = layui.jquery,
+
+					laypage = layui.laypage,
+
+					layer = parent.layer === undefined ? layui.layer : parent.layer;
+
+				$('input').iCheck({
+
+					checkboxClass: 'icheckbox_flat-green'
+
+				});
+
+
+
+				//page
+
+				laypage({
+
+					cont: 'page',
+
+					pages: {$nums},
+
+					groups: 10,
+
+					jump: function(obj, first) {
+
+						//得到了当前页，用于向服务端请求对应数据
+
+						var curr = obj.curr;
+
+						var html ='';
+
+						$.ajax({
+
+				            url:"{php echo $this->createWebUrl('seasonajax');php}",
+
+				            data:{page:curr },
+
+				            type:"post",
+
+				            dataType:"json",
+
+				            success:function(data){
+
+				            	layui.each(data.data, function(index, item){
+
+				            		html += '<tr>';
+
+				            		html += '<td>'+item.no+'</td>';
+
+							      	html += '<td>'+item.name+'</td>';
+
+							      	html += '<td>'+item.starttime+'</td>';
+
+							      	html += '<td>'+item.endtime+'</td>';
+							      	html += '<td>';
+							      	if(item.status==1){
+							      	html += '<a href="javascript:;" class="layui-btn layui-btn-mini layui-btn-warm">已开启</a>&nbsp;&nbsp;';
+							      	}else if(item.status==2){
+							      	html += '<a href="javascript:;" class="layui-btn layui-btn-mini layui-btn-normal">已结束</a>&nbsp;&nbsp;';
+							      	}else{
+							      	html += '<a href="javascript:;" class="layui-btn layui-btn-mini layui-btn-normal" data-id="'+item.id+'" id="start">开&nbsp;&nbsp;&nbsp;&nbsp;启</a>&nbsp;&nbsp;';
+							      	}
+							      	html += '<a href="javascript:;" class="layui-btn layui-btn-mini" data-id="'+item.id+'" id="edit">编辑</a>&nbsp;&nbsp;';
+							      	html += '<a href="javascript:;" data-id="'+item.id+'" id="del" class="layui-btn layui-btn-danger layui-btn-mini">删除</a></td>';
+
+							      	html += '</tr>';
+
+							    });
+
+							    $("tbody").html(html);
+
+				            },
+
+				            error:function(data){
+
+				                layer.alert('请稍后重试', {icon: 5});
+
+				            }
+
+				        });
+
+						
+
+					}
+
+				});
+
+				
+
+				$('#refresh').on('click', function() {
+
+					location.reload();
+
+				});
+
+				$('#add').on('click', function() {
+
+					layer.open({
+
+					  type: 2,
+
+					  area: ['40%', '60%'],
+
+					  fixed: false, //不固定
+
+					  maxmin: true,
+
+					  content: './index.php?c=site&a=entry&do=seasonadd&m=hc_answer',
+
+					  end: function () {
+
+				        location.reload();
+
+				      }
+
+					});
+
+				});
+
+				$('tbody').on('click', '#edit',function() {
+
+					var id = $(this).attr('data-id');
+
+					layer.open({
+
+					  type: 2,
+
+					  area: ['40%', '60%'],
+
+					  fixed: false, //不固定
+
+					  maxmin: true,
+
+					  content: './index.php?c=site&a=entry&do=seasonadd&m=hc_answer&id='+id,
+
+					  end: function () {
+
+				        location.reload();
+
+				      }
+
+					});
+
+				});
+
+				$('tbody').on('click', '#addlibrary',function() {
+
+					var id = $(this).attr('data-id');
+
+					layer.open({
+
+					  type: 2,
+
+					  area: ['80%', '95%'],
+
+					  fixed: false, //不固定
+
+					  maxmin: true,
+
+					  content: './index.php?c=site&a=entry&do=selectlib&m=hc_answer&id='+id,
+
+					  end: function () {
+
+				        location.reload();
+
+				      }
+
+					});
+
+				});
+
+				$('tbody').on('click', '#start',function() {
+
+					var id = $(this).attr('data-id');
+
+					layer.confirm('确定要开启吗？', {
+
+						btn: ['开启','取消'],
+
+						end: function () {
+
+					        location.reload();
+
+					    }
+
+					}, function(){
+
+						$.ajax({
+
+				            url:"{php echo $this->createWebUrl('seasondo');php}",
+
+				            data:{id:id,act:'start'},
+
+				            type:"post",
+
+				            dataType:"json",
+				            /*beforeSend:function(){
+				            	var index = layer.load(1, {
+								  shade: [0.1,'#fff'] //0.1透明度的白色背景
+								});
+				            },*/
+				            success:function(data){
+
+				            	if(data.code=='1'){
+
+				                	layer.alert(data.msg, {icon: 6});
+
+				            	}else{
+
+				                	layer.alert(data.msg, {icon: 5});
+
+				            	}
+
+				            },
+
+				            error:function(data){
+
+				                layer.alert('请稍后重试', {icon: 5});
+
+				            }
+
+				        });
+
+					});
+
+				});
+
+				$('tbody').on('click', '#del',function() {
+
+					var id = $(this).attr('data-id');
+
+					layer.confirm('确定要删除吗？', {
+
+						btn: ['确认','取消'],
+
+						end: function () {
+
+					        location.reload();
+
+					    }
+
+					}, function(){
+
+						$.ajax({
+
+				            url:"{php echo $this->createWebUrl('seasondo');php}",
+
+				            data:{id:id,act:'del'},
+
+				            type:"post",
+
+				            dataType:"json",
+
+				            success:function(data){
+
+				            	if(data.code=='1'){
+
+				                	layer.alert(data.msg, {icon: 6});
+
+				            	}else{
+
+				                	layer.alert(data.msg, {icon: 5});
+
+				            	}
+
+				            },
+
+				            error:function(data){
+
+				                layer.alert('请稍后重试', {icon: 5});
+
+				            }
+
+				        });
+
+					});
+
+				});
+
+			});
+
+		</script>
+
+	</body>
+
+
+
+</html>

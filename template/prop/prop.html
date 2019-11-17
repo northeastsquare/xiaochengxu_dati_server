@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Table</title>
+		<link rel="stylesheet" href="/addons/hc_answer/template/plugins/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/global.css" media="all">
+		<link rel="stylesheet" type="text/css" href="/addons/hc_answer/template/plugins/font-awesome/css/font-awesome.css">
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/table.css" />
+	</head>
+	<body>
+		<div class="admin-main">
+
+			<blockquote class="layui-elem-quote">
+				<div class="layui-inline">
+					<select class="layui-input" id="type">
+						<optgroup label="物品类型">
+							<option value="-1" {if $type==-1}selected="selected"{/if}>全部物品</option>
+				         	<option value="1" {if $type==1}selected="selected"{/if}>宝箱</option>
+				         	<option value="2" {if $type==2}selected="selected"{/if}>礼包</option>
+				         	<option value="3" {if $type==3}selected="selected"{/if}>金币卡</option>
+				         	<option value="4" {if $type==4}selected="selected"{/if}>知识书</option>
+				         	<option value="5" {if $type==5}selected="selected"{/if}>限次卡</option>
+				         	<option value="6" {if $type==6}selected="selected"{/if}>限时卡</option>
+				         	<option value="7" {if $type==7}selected="selected"{/if}>加分卡</option>
+						</optgroup>
+					</select>
+				</div>
+				<a href="javascript:;" class="layui-btn layui-btn-small" id="search">
+					<i class="layui-icon">&#xe615;</i> 搜索
+				</a>
+				<a href="javascript:;" class="layui-btn layui-btn-small" id="add">
+					<i class="layui-icon">&#xe608;</i> 添加物品
+				</a>
+				<a href="javascript:;" class="layui-btn layui-btn-small" id="refresh">
+					<i class="layui-icon">&#x1002;</i> 刷新
+				</a>
+			</blockquote>
+			<fieldset class="layui-elem-field">
+				<legend>物品列表</legend>
+				<div class="layui-field-box">
+					<table class="site-table table-hover">
+						<thead>
+							<tr>
+								<th>物品编号</th>
+								<th>物品名称</th>
+								<th>物品图标</th>
+								<th>场次</th>
+								<th>限时</th>
+								<th>金币</th>
+								<th>经验</th>
+								<th>价格</th>
+								<th>赠送</th>
+								<th>商城</th>
+								<th>排序</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+
+				</div>
+			</fieldset>
+			<div class="admin-table-page">
+				<div id="page" class="page">
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="/addons/hc_answer/template/plugins/layui/layui.js"></script>
+		<script>
+			layui.config({
+				base: '/addons/hc_answer/template/plugins/layui/modules/'
+			});
+
+			layui.use(['icheck', 'laypage','layer'], function() {
+				var $ = layui.jquery,
+					laypage = layui.laypage,
+					layer = parent.layer === undefined ? layui.layer : parent.layer;
+				$('input').iCheck({
+					checkboxClass: 'icheckbox_flat-green'
+				});
+
+				//page
+				laypage({
+					cont: 'page',
+					pages: {$nums},
+					groups: 10,
+					jump: function(obj, first) {
+						//得到了当前页，用于向服务端请求对应数据
+						var curr = obj.curr;
+						var html ='';
+						var type = $("#type").val();
+						$.ajax({
+				            url:"{php echo $this->createWebUrl('Propajax');php}",
+				            data:{page:curr,type:type},
+				            type:"post",
+				            dataType:"json",
+				            success:function(data){
+				            	layui.each(data.data, function(index, item){
+				            		html += '<tr>';
+				            		html += '<td>'+item.id+'</td>';
+				            		html += '<td>'+item.name+'</td>';
+							      	html += '<td><img src="'+item.thumb+'" style="width:50px"></td>';
+							      	html += '<td>'+item.cc+'</td>';
+							      	html += '<td>'+item.sj+'</td>';
+							      	html += '<td>'+item.jb+'</td>';
+							      	html += '<td>'+item.jy+'</td>';
+							      	html += '<td>'+item.price+'</td>';
+							      	html += '<td>'+item.give+'</td>';
+							      	html += '<td>'+item.shop+'</td>';
+							      	html += '<td>'+item.sort+'</td>';
+							      	html += '<td><a href="javascript:;" class="layui-btn layui-btn-mini" data-id="'+item.id+'" id="edit">编辑</a>&nbsp;&nbsp;';
+							      	html += '<a href="javascript:;" data-id="'+item.id+'" id="del" class="layui-btn layui-btn-danger layui-btn-mini">删除</a></td>';
+							      	html += '</tr>';
+							    });
+							    $("tbody").html(html);
+				            },
+				            error:function(data){
+				                layer.alert('请稍后重试', {icon: 5});
+				            }
+				        });
+						
+					}
+				});
+
+				$('#search').on('click', function() {
+					var type = $("#type").val();
+					location.href='./index.php?c=site&a=entry&do=prop&m=hc_answer&type='+type
+				});
+				
+				$('#refresh').on('click', function() {
+					location.reload();
+				});
+				$('#add').on('click', function() {
+					layer.open({
+					  type: 2,
+					  area: ['1100px', '850px'],
+					  fixed: false, //不固定
+					  maxmin: true,
+					  content: './index.php?c=site&a=entry&do=propadd&m=hc_answer',
+					  end: function () {
+				        location.reload();
+				      }
+					});
+				});
+				$('tbody').on('click', '#edit',function() {
+					var id = $(this).attr('data-id');
+					layer.open({
+					  type: 2,
+					  area: ['1100px', '850px'],
+					  fixed: false, //不固定
+					  maxmin: true,
+					  content: './index.php?c=site&a=entry&do=propadd&m=hc_answer&id='+id,
+					  end: function () {
+				        location.reload();
+				      }
+					});
+				});
+				$('tbody').on('click', '#addlibrary',function() {
+					var id = $(this).attr('data-id');
+					layer.open({
+					  type: 2,
+					  area: ['900px', '650px'],
+					  fixed: false, //不固定
+					  maxmin: true,
+					  content: './index.php?c=site&a=entry&do=selectlib&m=hc_answer&id='+id,
+					  end: function () {
+				        location.reload();
+				      }
+					});
+				});
+
+				$('tbody').on('click', '#del',function() {
+					var id = $(this).attr('data-id');
+					layer.confirm('确定要删除吗？', {
+						btn: ['确认','取消'],
+						end: function () {
+					        location.reload();
+					    }
+					}, function(){
+						$.ajax({
+				            url:"{php echo $this->createWebUrl('propdo');php}",
+				            data:{id:id,act:'del'},
+				            type:"post",
+				            dataType:"json",
+				            success:function(data){
+				            	if(data.code=='1'){
+				                	layer.alert(data.msg, {icon: 6});
+				            	}else{
+				                	layer.alert(data.msg, {icon: 5});
+				            	}
+				            },
+				            error:function(data){
+				                layer.alert('请稍后重试', {icon: 5});
+				            }
+				        });
+					});
+				});
+			});
+		</script>
+	</body>
+
+</html>

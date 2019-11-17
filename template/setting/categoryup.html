@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Table</title>
+		<link rel="stylesheet" href="/addons/hc_answer/template/plugins/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/global.css" media="all">
+		<link rel="stylesheet" type="text/css" href="/addons/hc_answer/template/plugins/font-awesome/css/font-awesome.css">
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/table.css" />
+	</head>
+	<body>
+		<div class="admin-main">
+
+			<blockquote class="layui-elem-quote">
+				注意：无论做任何修改，都要记得点击下方的保存按钮哦<br>
+			</blockquote>
+			<fieldset class="layui-elem-field">
+				<legend>等级设置</legend>
+				<div class="layui-field-box">
+					<table class="layui-table">
+						<thead>
+							<tr>
+								<th style="text-align: center">等级编号</th>
+								<th style="text-align: center">所需书籍</th>
+								<th style="text-align: center">书籍数量</th>
+								<th style="text-align: center">所需金币</th>
+								<th style="text-align: center">得分增加%</th>
+								<th style="text-align: center">操作</th>
+							</tr>
+						</thead>
+						<tbody id="table1">
+						{loop $list $item}
+							<tr>
+								<td><input type="num" name="no" value="{$item['no']}" class="layui-input"/></td>
+								<td><input type="num" name="book" value="{$item['book']}" class="layui-input book" style="display:inline;width: 75%;"/>
+								<a href="javascript:;" class="layui-btn addlibrary"><i class="layui-icon"></i></a></td>
+								<td><input type="num" name="num" value="{$item['num']}" class="layui-input"/></td>
+								<td><input type="num" name="gold" value="{$item['gold']}" class="layui-input"/></td>
+								<td><input type="num" name="score" value="{$item['score']}" class="layui-input"/></td>
+								<th>
+									<a href="javascript:;" class="layui-btn layui-btn-danger layui-btn-mini delete" data-id="{$item['id']}">删除</a>
+								</th>
+							</tr>
+						{/loop}
+						</tbody>
+						<tfoot>
+							<td colspan="5">
+								<a href="javascript:;" class="layui-btn layui-btn-small" id="add">
+									<i class="layui-icon">&#xe608;</i> 添加一行
+								</a>
+							</td>
+							<td>
+								<button class="layui-btn layui-btn-normal layui-btn-small" id="insert" >保存</button>
+							</td>
+						</tfoot>
+					</table>
+				</div>
+			</fieldset>
+
+		</div>
+		<script type="text/javascript" src="/addons/hc_answer/template/plugins/layui/layui.js"></script>
+		<script>
+			layui.config({
+				base: '/addons/hc_answer/template/plugins/layui/modules/'
+			});
+
+			layui.use(['icheck','form', 'laypage','layer'], function() {
+				var $ = layui.jquery,
+				form = layui.form();
+				$("#insert").click(function(){
+					var arr = [];
+					$("input[name='no']").each(function(e){
+						var no   = $(this).val()
+						var book = $(this).parent().parent().find("input[name='book']").val()
+						var num  = $(this).parent().parent().find("input[name='num']").val()
+						var gold = $(this).parent().parent().find("input[name='gold']").val()
+						var score= $(this).parent().parent().find("input[name='score']").val()
+						var obj = {
+					        no: no,
+					        book: book,
+					        num : num,
+					        gold: gold,
+					        score:score
+					    };
+						arr.push(obj)
+					})
+					$.ajax({
+			            url:"{php echo $this->createWebUrl('categorydo');php}",
+			            data:{act:'upgrade',upgrade:JSON.stringify(arr),id:{$id}},
+			            type:"post",
+			            dataType:"json",
+			            success:function(data){
+			            	console.log(arr)
+			            	if(data.code=='1'){
+			                	layer.alert(data.msg, {icon: 6},function(){
+			                		location.reload();
+			                	});
+			            	}else{
+			                	layer.alert(data.msg, {icon: 5});
+			            	}
+			            },
+			            error:function(data){
+			                layer.alert('请稍后重试', {icon: 5});
+			            }
+			        });
+				});
+				$('#refresh').on('click', function() {
+					location.reload();
+				});
+
+				$("table").on('click','.addlibrary',function(){
+					var that = this
+					layer.open({
+					  type: 2,
+					  area: ['85%', '90%'],
+					  fixed: false, //不固定
+					  maxmin: true,
+					  content: './index.php?c=site&a=entry&do=selectprop&m=hc_answer&types=4',
+					  btn: ['确定','关闭'],
+                      yes: function(index){
+					  		var res = window["layui-layer-iframe" + index].callbackdata();
+					  		$(that).parent().find('.book').val(res);
+							/*$("#remark").val(res);
+							var html = '';
+							$.ajax({
+					            url:"{php echo $this->createWebUrl('propdo');php}",
+					            data:{ids:res,act:'ajaxlook'},
+					            type:"post",
+					            dataType:"json",
+					            success:function(data){
+					            	
+								    $("tbody").append(html);
+					            },
+					            error:function(data){
+					                layer.alert('请稍后重试', {icon: 5});
+					            }
+					        });*/
+
+	                        //最后关闭弹出层
+	                        layer.close(index);
+	                    },
+	                    cancel: function(){
+	                        //右上角关闭回调
+	                    }
+					});
+				});
+				$("#add").click(function(){
+					var tr='<tr>';
+					tr+= '<td class="layui-input-block"><input type="num" name="no" class="layui-input"/></td>';
+					tr+= '<td class="layui-input-block"><input type="num" name="book" class="layui-input book" style="display:inline;width: 75%;"/><a href="javascript:;" class="layui-btn addlibrary"><i class="layui-icon"></i></a></td>';
+					tr+= '<td class="layui-input-block"><input type="num" name="num" class="layui-input"/></td>';
+					tr+= '<td class="layui-input-block"><input type="num" name="gold" class="layui-input"/></td>';
+					tr+= '<td class="layui-input-block"><input type="num" name="score" class="layui-input"/></td>';
+					tr+= '<td>';
+					tr+= '<a href="javascript:;" class="layui-btn layui-btn-danger layui-btn-mini delete" >删除</a>';
+					tr+= '</td></tr>';
+　  　				
+					$("#table1").append(tr);　
+			    });
+			    $("table").on('click','.delete',function(){
+				    	$(this).parent().parent().remove();
+			    });
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+
+		<meta charset="UTF-8">
+
+		<title>Table</title>
+
+		<link rel="stylesheet" href="/addons/hc_answer/template/plugins/layui/css/layui.css" media="all" />
+
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/global.css" media="all">
+
+		<link rel="stylesheet" type="text/css" href="/addons/hc_answer/template/plugins/font-awesome/css/font-awesome.css">
+
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/table.css" />
+
+	</head>
+	<body>
+		<div class="admin-main">
+			<blockquote class="layui-elem-quote">
+			  	<div class="layui-inline" style="width: 400px;">
+			    	<input class="layui-input" id="ordersn" value="{$ordersn}" placeholder="订单编号">
+			  	</div>
+
+				<a href="javascript:;" class="layui-btn layui-btn-small" id="search">
+					<i class="layui-icon">&#xe615;</i> 搜索
+				</a>
+				<a href="javascript:;" class="layui-btn layui-btn-small" id="refresh">
+					<i class="layui-icon">&#x1002;</i> 刷新
+				</a>
+
+			</blockquote>
+
+			<fieldset class="layui-elem-field">
+
+				<legend>用户列表</legend>
+
+				<div class="layui-field-box">
+
+					<table class="site-table table-hover">
+
+						<thead>
+
+							<tr>
+
+								<th>头像</th>
+
+								<th>昵称</th>
+
+								<th>订单编号</th>
+
+								<th>金额</th>
+
+								<th>支付状态</th>
+
+								<th>支付时间</th>
+
+								<th>回执编号</th>
+
+							</tr>
+
+						</thead>
+
+						<tbody>
+
+						</tbody>
+
+					</table>
+
+
+
+				</div>
+
+			</fieldset>
+
+			<div class="admin-table-page">
+
+				<div id="page" class="page">
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<script type="text/javascript" src="/addons/hc_answer/template/plugins/layui/layui.js"></script>
+
+		<script>
+
+			layui.config({
+
+				base: '/addons/hc_answer/template/plugins/layui/modules/'
+
+			});
+
+
+
+			layui.use(['icheck', 'laypage','layer'], function() {
+
+				var $ = layui.jquery,
+
+					laypage = layui.laypage,
+
+					layer = parent.layer === undefined ? layui.layer : parent.layer;
+
+				$('input').iCheck({
+
+					checkboxClass: 'icheckbox_flat-green'
+
+				});
+
+
+
+				//page
+
+				laypage({
+					cont: 'page',
+					pages: {$nums},
+					groups: 10,
+					jump: function(obj, first) {
+						//得到了当前页，用于向服务端请求对应数据
+						var curr = obj.curr;
+						var ordersn= $("#ordersn").val();
+						var html ='';
+
+						$.ajax({
+
+				            url:"{php echo $this->createWebUrl('orderajax');php}",
+
+				            data:{page:curr,ordersn:ordersn},
+
+				            type:"post",
+
+				            dataType:"json",
+
+				            success:function(data){
+
+				            	layui.each(data.data, function(index, item){
+
+				            		html += '<tr>';
+
+				            		html += '<td><img src="'+item.avatar+'" style="width:50px" /></td>';
+
+							      	html += '<td>'+item.nickname+'</td>';
+
+							      	html += '<td>'+item.ordersn+'</td>';
+
+							      	html += '<td>'+item.fee+'</td>';
+
+							      	html += '<td>'+item.paystatus+'</td>';
+
+							      	html += '<td>'+item.paytime+'</td>';
+
+							      	html += '<td>'+item.transid+'</td>';
+
+							      	html += '</tr>';
+
+							    });
+
+							    $("tbody").html(html);
+
+				            },
+
+				            error:function(data){
+
+				                layer.alert('请稍后重试', {icon: 5});
+
+				            }
+
+				        });
+					}
+
+				});
+
+
+
+				$('#search').on('click', function() {
+
+					var ordersn= $("#ordersn").val();
+					location.href='./index.php?c=site&a=entry&do=order&m=hc_answer&ordersn='+ordersn
+
+				});
+
+				$('#refresh').on('click', function() {
+
+					location.reload();
+
+				});
+
+			});
+
+		</script>
+
+	</body>
+
+
+

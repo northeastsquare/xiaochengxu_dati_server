@@ -1,0 +1,1404 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Layui</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link rel="stylesheet" href="/addons/hc_answer/template/plugins/layui/css/layui.css" media="all" />
+		<link rel="shortcut icon" href="./resource/images/favicon.ico" />
+		<link href="./resource/css/bootstrap.min.css?v=20170915" rel="stylesheet">
+		<link href="./resource/css/common.css?v=20170915" rel="stylesheet">
+		<script type="text/javascript">
+			if(navigator.appName == 'Microsoft Internet Explorer'){
+				if(navigator.userAgent.indexOf("MSIE 5.0")>0 || navigator.userAgent.indexOf("MSIE 6.0")>0 || navigator.userAgent.indexOf("MSIE 7.0")>0) {
+					alert('您使用的 IE 浏览器版本过低, 推荐使用 Chrome 浏览器或 IE8 及以上版本浏览器.');
+				}
+			}
+			window.sysinfo = {
+				{if !empty($_W['uniacid'])}'uniacid': '{$_W['uniacid']}',{/if}
+				{if !empty($_W['acid'])}'acid': '{$_W['acid']}',{/if}
+				{if !empty($_W['openid'])}'openid': '{$_W['openid']}',{/if}
+				{if !empty($_W['uid'])}'uid': '{$_W['uid']}',{/if}
+				'isfounder': {if !empty($_W['isfounder'])}1{else}0{/if},
+				'family': '{IMS_FAMILY}',
+				'siteroot': '{$_W['siteroot']}',
+				'siteurl': '{$_W['siteurl']}',
+				'attachurl': '{$_W['attachurl']}',
+				'attachurl_local': '{$_W['attachurl_local']}',
+				'attachurl_remote': '{$_W['attachurl_remote']}',
+				'module' : {'url' : '{if defined('MODULE_URL')}{MODULE_URL}{/if}', 'name' : '{if defined('IN_MODULE')}{IN_MODULE}{/if}'},
+				'cookie' : {'pre': '{$_W['config']['cookie']['pre']}'},
+				'account' : {php echo json_encode($_W['account'])},
+				'server' : {'php' : '{php echo phpversion()}'},
+			};
+		</script>
+		<script>var require = { urlArgs: 'v=20170915' };</script>
+		<script type="text/javascript" src="./resource/js/lib/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="./resource/js/lib/bootstrap.min.js"></script>
+		<script type="text/javascript" src="./resource/js/app/util.js?v=20170915"></script>
+		<script type="text/javascript" src="./resource/js/app/common.min.js?v=20170915"></script>
+		<script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+		<style type="text/css">
+			
+			blockquote{
+				font-size: 14px
+			}
+			.layui-form-label{
+				width: 120px
+			}
+			.layui-input-block{
+				margin-left: 130px;
+			}
+			.cmodule{
+				border: 1px dashed #ceb1b1;
+			    height: 370px;
+			    padding: 20px;
+			}
+			.h5ad{
+				display: none;
+			}
+			.h5adshow{
+				display: block;
+			}
+		</style>
+	</head>
+
+	<body style="background-color:#fff">
+		<div style="margin: 15px;">
+			<blockquote class="layui-elem-quote">
+				<a href="javascript:;" class="layui-btn layui-btn-small" id="refresh">
+					<i class="layui-icon">&#x1002;</i> 刷新
+				</a>
+				<a href="javascript:;" class="layui-btn layui-btn-small" id="startsocket">
+					<i class="layui-icon">&#x1002;</i> 开启服务
+				</a>
+			</blockquote>
+			<form action="" id="form">
+			<div class="layui-tab layui-tab-card" lay-filter="docDemoTabBrief">
+				<ul class="layui-tab-title">
+					<li class="layui-this">首页设置</li>
+					<li>基础设置</li>
+					<li>答题设置</li>
+					<li>转发设置</li>
+					<li>关注设置</li>
+					<li>审核设置</li>
+					<li>公告设置</li>
+					<li>签到设置</li>
+					<li>模板消息</li>
+					<li>赛季活动</li>
+					<li>主题设置</li>
+					<li>主题图片设置</li>
+				</ul>
+			    <div class="layui-tab-content">
+			    <div class="layui-tab-item layui-show">
+						<blockquote class="layui-elem-quote">
+							注意：小程序前端首页模块展示
+						</blockquote>
+						<div style="float:left;width:40%;">
+							<div class="cmodule">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块[左一]</label>
+								    <div class="layui-input-block">
+										{php echo tpl_form_field_image('index[0][img]',$info[index][0]['img']);}
+									<span style="color:red;">规定图片尺寸470*(390/260/510)</span>
+									</div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块链接</label>
+								    <div class="layui-input-block">
+								      <select class="mselect" name="index[0][link]" lay-filter="link">
+								        <option value="">--模块链接--</option>
+								        <option value="../passLevel/passLevel" {if $info[index][0]['link']=='../passLevel/passLevel'}selected="selected"{/if}>排位赛</option>
+								        <option value="../pages/goods/goods" {if $info[index][0]['link']=='../pages/goods/goods'}selected="selected"{/if}>我的物品</option>
+								        <option value="../pages/market/market" {if $info[index][0]['link']=='../pages/market/market'}selected="selected"{/if}>商店</option>
+								        <option value="../pages/rankings/rankings" {if $info[index][0]['link']=='../pages/rankings/rankings'}selected="selected"{/if}>排行榜</option>
+								        <option value="../pages/books/books" {if $info[index][0]['link']=='../pages/books/books'}selected="selected"{/if}>知识书</option>
+								        <option value="../passLevel/shareanswer/shareanswer" {if $info[index][0]['link']=='../passLevel/shareanswer/shareanswer'}selected="selected"{/if}>好友对战</option>
+								        <option value="h5" {if $info[index][0]['link']=='h5'}selected="selected"{/if}>H5广告</option>
+								        {loop $ad $item}
+								        	<option value="{$item['id']}" {if $info[index][0]['link']==$item['id']}selected="selected"{/if}>{$item['name']}</option>
+								        {/loop}
+								      </select>
+								    </div>
+								</div>
+								<div class="layui-form-item {if !empty($info[index][0]['url'])}h5adshow{else}h5ad{/if}" >
+								    <label class="layui-form-label">H5广告链接</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="index[0][url]" value="{$info[index][0]['url']}" class="layui-input layui-form-danger">
+								      <span style="color:red;">需要配置业务域名</span>
+								    </div>
+								</div>
+							</div>
+							<div class="cmodule">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块[左二]</label>
+								    <div class="layui-input-block">
+										{php echo tpl_form_field_image('index[1][img]',$info[index][1]['img']);}
+									<span style="color:red;">规定图片尺寸470*(390/260/510)</span>
+									</div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块链接</label>
+								    <div class="layui-input-block">
+								      <select class="mselect" name="index[1][link]" lay-filter="link">
+								         <option value="">--模块链接--</option>
+								        <option value="../passLevel/passLevel" {if $info[index][1]['link']=='../passLevel/passLevel'}selected="selected"{/if}>排位赛</option>
+								        <option value="../pages/goods/goods" {if $info[index][1]['link']=='../pages/goods/goods'}selected="selected"{/if}>我的物品</option>
+								        <option value="../pages/market/market" {if $info[index][1]['link']=='../pages/market/market'}selected="selected"{/if}>商店</option>
+								        <option value="../pages/rankings/rankings" {if $info[index][1]['link']=='../pages/rankings/rankings'}selected="selected"{/if}>排行榜</option>
+								        <option value="../pages/books/books" {if $info[index][1]['link']=='../pages/books/books'}selected="selected"{/if}>知识书</option>
+								        <option value="../passLevel/shareanswer/shareanswer" {if $info[index][1]['link']=='../passLevel/shareanswer/shareanswer'}selected="selected"{/if}>好友对战</option>
+								        <option value="h5" {if $info[index][1]['link']=='h5'}selected="selected"{/if}>H5广告</option>
+								        {loop $ad $item}
+								        	<option value="{$item['id']}" {if $info[index][1]['link']==$item['id']}selected="selected"{/if}>{$item['name']}</option>
+								        {/loop}
+								      </select>
+								    </div>
+								</div>
+								<div class="layui-form-item {if !empty($info[index][1]['url'])}h5adshow{else}h5ad{/if}">
+								    <label class="layui-form-label">H5广告链接</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="index[1][url]" value="{$info[index][1]['url']}" class="layui-input layui-form-danger">
+								      <span style="color:red;">需要配置业务域名</span>
+								    </div>
+								</div>
+							</div>
+							<div class="cmodule">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块[左三]</label>
+								    <div class="layui-input-block">
+										{php echo tpl_form_field_image('index[2][img]',$info[index][2]['img']);}
+									<span style="color:red;">规定图片尺寸470*(390/260/510)</span>
+									</div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块链接</label>
+								    <div class="layui-input-block">
+								      <select class="mselect" name="index[2][link]" lay-filter="link">
+								         <option value="">--模块链接--</option>
+								        <option value="../passLevel/passLevel" {if $info[index][2]['link']=='../passLevel/passLevel'}selected="selected"{/if}>排位赛</option>
+								        <option value="../pages/goods/goods" {if $info[index][2]['link']=='../pages/goods/goods'}selected="selected"{/if}>我的物品</option>
+								        <option value="../pages/market/market" {if $info[index][2]['link']=='../pages/market/market'}selected="selected"{/if}>商店</option>
+								        <option value="../pages/rankings/rankings" {if $info[index][2]['link']=='../pages/rankings/rankings'}selected="selected"{/if}>排行榜</option>
+								        <option value="../pages/books/books" {if $info[index][2]['link']=='../pages/books/books'}selected="selected"{/if}>知识书</option>
+								        <option value="../passLevel/shareanswer/shareanswer" {if $info[index][2]['link']=='../passLevel/shareanswer/shareanswer'}selected="selected"{/if}>好友对战</option>
+								        <option value="h5" {if $info[index][2]['link']=='h5'}selected="selected"{/if}>H5广告</option>
+								        {loop $ad $item}
+								        	<option value="{$item['id']}" {if $info[index][2]['link']==$item['id']}selected="selected"{/if}>{$item['name']}</option>
+								        {/loop}
+								      </select>
+								    </div>
+								</div>
+								<div class="layui-form-item {if !empty($info[index][2]['url'])}h5adshow{else}h5ad{/if}">
+								    <label class="layui-form-label">H5广告链接</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="index[2][url]" value="{$info[index][2]['url']}" class="layui-input layui-form-danger">
+								      <span style="color:red;">需要配置业务域名</span>
+								    </div>
+								</div>
+							</div>
+							<div class="cmodule">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块[左四]</label>
+								    <div class="layui-input-block">
+										{php echo tpl_form_field_image('index[6][img]',$info[index][6]['img']);}
+									<span style="color:red;">规定图片尺寸470*(390/260/510)</span>
+									</div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块链接</label>
+								    <div class="layui-input-block">
+								      <select class="mselect" name="index[6][link]" lay-filter="link">
+								         <option value="">--模块链接--</option>
+								        <option value="../passLevel/passLevel" {if $info[index][6]['link']=='../passLevel/passLevel'}selected="selected"{/if}>排位赛</option>
+								        <option value="../pages/goods/goods" {if $info[index][6]['link']=='../pages/goods/goods'}selected="selected"{/if}>我的物品</option>
+								        <option value="../pages/market/market" {if $info[index][6]['link']=='../pages/market/market'}selected="selected"{/if}>商店</option>
+								        <option value="../pages/rankings/rankings" {if $info[index][6]['link']=='../pages/rankings/rankings'}selected="selected"{/if}>排行榜</option>
+								        <option value="../pages/books/books" {if $info[index][6]['link']=='../pages/books/books'}selected="selected"{/if}>知识书</option>
+								        <option value="../passLevel/shareanswer/shareanswer" {if $info[index][6]['link']=='../passLevel/shareanswer/shareanswer'}selected="selected"{/if}>好友对战</option>
+								        <option value="h5" {if $info[index][6]['link']=='h5'}selected="selected"{/if}>H5广告</option>
+								        {loop $ad $item}
+								        	<option value="{$item['id']}" {if $info[index][6]['link']==$item['id']}selected="selected"{/if}>{$item['name']}</option>
+								        {/loop}
+								      </select>
+								    </div>
+								</div>
+								<div class="layui-form-item {if !empty($info[index][6]['url'])}h5adshow{else}h5ad{/if}">
+								    <label class="layui-form-label">H5广告链接</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="index[6][url]" value="{$info[index][6]['url']}" class="layui-input layui-form-danger">
+								      <span style="color:red;">需要配置业务域名</span>
+								    </div>
+								</div>
+							</div>
+							<div class="cmodule">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块[左五]</label>
+								    <div class="layui-input-block">
+										{php echo tpl_form_field_image('index[7][img]',$info[index][7]['img']);}
+									<span style="color:red;">规定图片尺寸470*(390/260/510)</span>
+									</div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块链接</label>
+								    <div class="layui-input-block">
+								      <select class="mselect" name="index[7][link]" lay-filter="link">
+								         <option value="">--模块链接--</option>
+								        <option value="../passLevel/passLevel" {if $info[index][7]['link']=='../passLevel/passLevel'}selected="selected"{/if}>排位赛</option>
+								        <option value="../pages/goods/goods" {if $info[index][7]['link']=='../pages/goods/goods'}selected="selected"{/if}>我的物品</option>
+								        <option value="../pages/market/market" {if $info[index][7]['link']=='../pages/market/market'}selected="selected"{/if}>商店</option>
+								        <option value="../pages/rankings/rankings" {if $info[index][7]['link']=='../pages/rankings/rankings'}selected="selected"{/if}>排行榜</option>
+								        <option value="../pages/books/books" {if $info[index][7]['link']=='../pages/books/books'}selected="selected"{/if}>知识书</option>
+								        <option value="../passLevel/shareanswer/shareanswer" {if $info[index][7]['link']=='../passLevel/shareanswer/shareanswer'}selected="selected"{/if}>好友对战</option>
+								        <option value="h5" {if $info[index][7]['link']=='h5'}selected="selected"{/if}>H5广告</option>
+								        {loop $ad $item}
+								        	<option value="{$item['id']}" {if $info[index][7]['link']==$item['id']}selected="selected"{/if}>{$item['name']}</option>
+								        {/loop}
+								      </select>
+								    </div>
+								</div>
+								<div class="layui-form-item {if !empty($info[index][7]['url'])}h5adshow{else}h5ad{/if}">
+								    <label class="layui-form-label">H5广告链接</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="index[7][url]" value="{$info[index][7]['url']}" class="layui-input layui-form-danger">
+								      <span style="color:red;">需要配置业务域名</span>
+								    </div>
+								</div>
+							</div>
+							<div class="cmodule">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块[左六]</label>
+								    <div class="layui-input-block">
+										{php echo tpl_form_field_image('index[8][img]',$info[index][8]['img']);}
+									<span style="color:red;">规定图片尺寸470*(390/260/510)</span>
+									</div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块链接</label>
+								    <div class="layui-input-block">
+								      <select class="mselect" name="index[8][link]" lay-filter="link">
+								         <option value="">--模块链接--</option>
+								        <option value="../passLevel/passLevel" {if $info[index][8]['link']=='../passLevel/passLevel'}selected="selected"{/if}>排位赛</option>
+								        <option value="../pages/goods/goods" {if $info[index][8]['link']=='../pages/goods/goods'}selected="selected"{/if}>我的物品</option>
+								        <option value="../pages/market/market" {if $info[index][8]['link']=='../pages/market/market'}selected="selected"{/if}>商店</option>
+								        <option value="../pages/rankings/rankings" {if $info[index][8]['link']=='../pages/rankings/rankings'}selected="selected"{/if}>排行榜</option>
+								        <option value="../pages/books/books" {if $info[index][8]['link']=='../pages/books/books'}selected="selected"{/if}>知识书</option>
+								        <option value="../passLevel/shareanswer/shareanswer" {if $info[index][8]['link']=='../passLevel/shareanswer/shareanswer'}selected="selected"{/if}>好友对战</option>
+								        <option value="h5" {if $info[index][8]['link']=='h5'}selected="selected"{/if}>H5广告</option>
+								        {loop $ad $item}
+								        	<option value="{$item['id']}" {if $info[index][8]['link']==$item['id']}selected="selected"{/if}>{$item['name']}</option>
+								        {/loop}
+								      </select>
+								    </div>
+								</div>
+								<div class="layui-form-item {if !empty($info[index][8]['url'])}h5adshow{else}h5ad{/if}">
+								    <label class="layui-form-label">H5广告链接</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="index[8][url]" value="{$info[index][8]['url']}" class="layui-input layui-form-danger">
+								      <span style="color:red;">需要配置业务域名</span>
+								    </div>
+								</div>
+							</div>
+						</div>
+						<div style="float:left;width:40%;">
+							<div class="cmodule">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块[右一]</label>
+								    <div class="layui-input-block">
+										{php echo tpl_form_field_image('index[3][img]',$info[index][3]['img']);}
+									<span style="color:red;">规定图片尺寸470*(390/260/510)</span>
+									</div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块链接</label>
+								    <div class="layui-input-block">
+								      <select class="mselect" name="index[3][link]" lay-filter="link">
+								         <option value="">--模块链接--</option>
+								        <option value="../passLevel/passLevel" {if $info[index][3]['link']=='../passLevel/passLevel'}selected="selected"{/if}>排位赛</option>
+								        <option value="../pages/goods/goods" {if $info[index][3]['link']=='../pages/goods/goods'}selected="selected"{/if}>我的物品</option>
+								        <option value="../pages/market/market" {if $info[index][3]['link']=='../pages/market/market'}selected="selected"{/if}>商店</option>
+								        <option value="../pages/rankings/rankings" {if $info[index][3]['link']=='../pages/rankings/rankings'}selected="selected"{/if}>排行榜</option>
+								        <option value="../pages/books/books" {if $info[index][3]['link']=='../pages/books/books'}selected="selected"{/if}>知识书</option>
+								        <option value="../passLevel/shareanswer/shareanswer" {if $info[index][3]['link']=='../passLevel/shareanswer/shareanswer'}selected="selected"{/if}>好友对战</option>
+								        <option value="h5" {if $info[index][3]['link']=='h5'}selected="selected"{/if}>H5广告</option>
+								        {loop $ad $item}
+								        	<option value="{$item['id']}" {if $info[index][3]['link']==$item['id']}selected="selected"{/if}>{$item['name']}</option>
+								        {/loop}
+								      </select>
+								    </div>
+								</div>
+								<div class="layui-form-item {if !empty($info[index][3]['url'])}h5adshow{else}h5ad{/if}">
+								    <label class="layui-form-label">H5广告链接</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="index[3][url]" value="{$info[index][3]['url']}" class="layui-input layui-form-danger">
+								      <span style="color:red;">需要配置业务域名</span>
+								    </div>
+								</div>
+							</div>
+							<div class="cmodule">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块[右二]</label>
+								    <div class="layui-input-block">
+										{php echo tpl_form_field_image('index[4][img]',$info[index][4]['img']);}
+									<span style="color:red;">规定图片尺寸470*(390/260/510)</span>
+									</div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块链接</label>
+								    <div class="layui-input-block">
+								      <select class="mselect" name="index[4][link]" lay-filter="link">
+								         <option value="">--模块链接--</option>
+								        <option value="../passLevel/passLevel" {if $info[index][4]['link']=='../passLevel/passLevel'}selected="selected"{/if}>排位赛</option>
+								        <option value="../pages/goods/goods" {if $info[index][4]['link']=='../pages/goods/goods'}selected="selected"{/if}>我的物品</option>
+								        <option value="../pages/market/market" {if $info[index][4]['link']=='../pages/market/market'}selected="selected"{/if}>商店</option>
+								        <option value="../pages/rankings/rankings" {if $info[index][4]['link']=='../pages/rankings/rankings'}selected="selected"{/if}>排行榜</option>
+								        <option value="../pages/books/books" {if $info[index][4]['link']=='../pages/books/books'}selected="selected"{/if}>知识书</option>
+								        <option value="../passLevel/shareanswer/shareanswer" {if $info[index][4]['link']=='../passLevel/shareanswer/shareanswer'}selected="selected"{/if}>好友对战</option>
+								        <option value="h5" {if $info[index][4]['link']=='h5'}selected="selected"{/if}>H5广告</option>
+								        {loop $ad $item}
+								        	<option value="{$item['id']}" {if $info[index][4]['link']==$item['id']}selected="selected"{/if}>{$item['name']}</option>
+								        {/loop}
+								      </select>
+								    </div>
+								</div>
+								<div class="layui-form-item {if !empty($info[index][5]['url'])}h5adshow{else}h5ad{/if}">
+								    <label class="layui-form-label">H5广告链接</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="index[4][url]" value="{$info[index][4]['url']}" class="layui-input layui-form-danger">
+								      <span style="color:red;">需要配置业务域名</span>
+								    </div>
+								</div>
+							</div>
+							<div class="cmodule">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块[右三]</label>
+								    <div class="layui-input-block">
+										{php echo tpl_form_field_image('index[5][img]',$info[index][5]['img']);}
+									<span style="color:red;">规定图片尺寸470*(390/260/510)</span>
+									</div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块链接</label>
+								    <div class="layui-input-block">
+								      <select class="mselect" name="index[5][link]" lay-filter="link">
+								         <option value="">--模块链接--</option>
+								        <option value="../passLevel/passLevel" {if $info[index][5]['link']=='../passLevel/passLevel'}selected="selected"{/if}>排位赛</option>
+								        <option value="../pages/goods/goods" {if $info[index][5]['link']=='../pages/goods/goods'}selected="selected"{/if}>我的物品</option>
+								        <option value="../pages/market/market" {if $info[index][5]['link']=='../pages/market/market'}selected="selected"{/if}>商店</option>
+								        <option value="../pages/rankings/rankings" {if $info[index][5]['link']=='../pages/rankings/rankings'}selected="selected"{/if}>排行榜</option>
+								        <option value="../pages/books/books" {if $info[index][5]['link']=='../pages/books/books'}selected="selected"{/if}>知识书</option>
+								        <option value="../passLevel/shareanswer/shareanswer" {if $info[index][5]['link']=='../passLevel/shareanswer/shareanswer'}selected="selected"{/if}>好友对战</option>
+								        <option value="h5" {if $info[index][5]['link']=='h5'}selected="selected"{/if}>H5广告</option>
+								        {loop $ad $item}
+								        	<option value="{$item['id']}" {if $info[index][5]['link']==$item['id']}selected="selected"{/if}>{$item['name']}</option>
+								        {/loop}
+								      </select>
+								    </div>
+								</div>
+								<div class="layui-form-item {if !empty($info[index][5]['url'])}h5adshow{else}h5ad{/if}">
+								    <label class="layui-form-label">H5广告链接</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="index[5][url]" value="{$info[index][5]['url']}" class="layui-input layui-form-danger">
+								      <span style="color:red;">需要配置业务域名</span>
+								    </div>
+								</div>
+							</div>
+							<div class="cmodule">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块[右四]</label>
+								    <div class="layui-input-block">
+										{php echo tpl_form_field_image('index[9][img]',$info[index][9]['img']);}
+									<span style="color:red;">规定图片尺寸470*(390/260/510)</span>
+									</div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块链接</label>
+								    <div class="layui-input-block">
+								      <select class="mselect" name="index[9][link]" lay-filter="link">
+								         <option value="">--模块链接--</option>
+								        <option value="../passLevel/passLevel" {if $info[index][9]['link']=='../passLevel/passLevel'}selected="selected"{/if}>排位赛</option>
+								        <option value="../pages/goods/goods" {if $info[index][9]['link']=='../pages/goods/goods'}selected="selected"{/if}>我的物品</option>
+								        <option value="../pages/market/market" {if $info[index][9]['link']=='../pages/market/market'}selected="selected"{/if}>商店</option>
+								        <option value="../pages/rankings/rankings" {if $info[index][9]['link']=='../pages/rankings/rankings'}selected="selected"{/if}>排行榜</option>
+								        <option value="../pages/books/books" {if $info[index][9]['link']=='../pages/books/books'}selected="selected"{/if}>知识书</option>
+								        <option value="../passLevel/shareanswer/shareanswer" {if $info[index][9]['link']=='../passLevel/shareanswer/shareanswer'}selected="selected"{/if}>好友对战</option>
+								        <option value="h5" {if $info[index][9]['link']=='h5'}selected="selected"{/if}>H5广告</option>
+								        {loop $ad $item}
+								        	<option value="{$item['id']}" {if $info[index][9]['link']==$item['id']}selected="selected"{/if}>{$item['name']}</option>
+								        {/loop}
+								      </select>
+								    </div>
+								</div>
+								<div class="layui-form-item {if !empty($info[index][9]['url'])}h5adshow{else}h5ad{/if}">
+								    <label class="layui-form-label">H5广告链接</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="index[9][url]" value="{$info[index][9]['url']}" class="layui-input layui-form-danger">
+								      <span style="color:red;">需要配置业务域名</span>
+								    </div>
+								</div>
+							</div>
+							<div class="cmodule">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块[右五]</label>
+								    <div class="layui-input-block">
+										{php echo tpl_form_field_image('index[10][img]',$info[index][10]['img']);}
+									<span style="color:red;">规定图片尺寸470*(390/260/510)</span>
+									</div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块链接</label>
+								    <div class="layui-input-block">
+								      <select class="mselect" name="index[10][link]" lay-filter="link">
+								         <option value="">--模块链接--</option>
+								        <option value="../passLevel/passLevel" {if $info[index][10]['link']=='../passLevel/passLevel'}selected="selected"{/if}>排位赛</option>
+								        <option value="../pages/goods/goods" {if $info[index][10]['link']=='../pages/goods/goods'}selected="selected"{/if}>我的物品</option>
+								        <option value="../pages/market/market" {if $info[index][10]['link']=='../pages/market/market'}selected="selected"{/if}>商店</option>
+								        <option value="../pages/rankings/rankings" {if $info[index][10]['link']=='../pages/rankings/rankings'}selected="selected"{/if}>排行榜</option>
+								        <option value="../pages/books/books" {if $info[index][10]['link']=='../pages/books/books'}selected="selected"{/if}>知识书</option>
+								        <option value="../passLevel/shareanswer/shareanswer" {if $info[index][10]['link']=='../passLevel/shareanswer/shareanswer'}selected="selected"{/if}>好友对战</option>
+								        <option value="h5" {if $info[index][10]['link']=='h5'}selected="selected"{/if}>H5广告</option>
+								        {loop $ad $item}
+								        	<option value="{$item['id']}" {if $info[index][10]['link']==$item['id']}selected="selected"{/if}>{$item['name']}</option>
+								        {/loop}
+								      </select>
+								    </div>
+								</div>
+								<div class="layui-form-item {if !empty($info[index][10]['url'])}h5adshow{else}h5ad{/if}">
+								    <label class="layui-form-label">H5广告链接</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="index[10][url]" value="{$info[index][10]['url']}" class="layui-input layui-form-danger">
+								      <span style="color:red;">需要配置业务域名</span>
+								    </div>
+								</div>
+							</div>
+							<div class="cmodule">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块[右六]</label>
+								    <div class="layui-input-block">
+										{php echo tpl_form_field_image('index[11][img]',$info[index][11]['img']);}
+									<span style="color:red;">规定图片尺寸470*(390/260/510)</span>
+									</div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">模块链接</label>
+								    <div class="layui-input-block">
+								      <select class="mselect" name="index[11][link]" lay-filter="link">
+								         <option value="">--模块链接--</option>
+								        <option value="../passLevel/passLevel" {if $info[index][11]['link']=='../passLevel/passLevel'}selected="selected"{/if}>排位赛</option>
+								        <option value="../pages/goods/goods" {if $info[index][11]['link']=='../pages/goods/goods'}selected="selected"{/if}>我的物品</option>
+								        <option value="../pages/market/market" {if $info[index][11]['link']=='../pages/market/market'}selected="selected"{/if}>商店</option>
+								        <option value="../pages/rankings/rankings" {if $info[index][11]['link']=='../pages/rankings/rankings'}selected="selected"{/if}>排行榜</option>
+								        <option value="../pages/books/books" {if $info[index][11]['link']=='../pages/books/books'}selected="selected"{/if}>知识书</option>
+								        <option value="../passLevel/shareanswer/shareanswer" {if $info[index][11]['link']=='../passLevel/shareanswer/shareanswer'}selected="selected"{/if}>好友对战</option>
+								        <option value="h5" {if $info[index][11]['link']=='h5'}selected="selected"{/if}>H5广告</option>
+								        {loop $ad $item}
+								        	<option value="{$item['id']}" {if $info[index][11]['link']==$item['id']}selected="selected"{/if}>{$item['name']}</option>
+								        {/loop}
+								      </select>
+								    </div>
+								</div>
+								<div class="layui-form-item {if !empty($info[index][11]['url'])}h5adshow{else}h5ad{/if}">
+								    <label class="layui-form-label">H5广告链接</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="index[11][url]" value="{$info[index][11]['url']}" class="layui-input layui-form-danger">
+								      <span style="color:red;">需要配置业务域名</span>
+								    </div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="layui-tab-item">
+						<blockquote class="layui-elem-quote">
+							注意：小程序前端基础信息设置
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">小程序标题</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="basic[title]" value="{$info[basic]['title']}" lay-verify="required" placeholder="小程序标题" autocomplete="off" class="layui-input layui-form-danger">
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">联系客服文字</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="basic[contact]" value="{$info[basic]['contact']}" lay-verify="required" placeholder="联系客服" autocomplete="off" class="layui-input layui-form-danger">
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">【世界排行】文字</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="basic[worldtext]" value="{$info[basic]['worldtext']}" lay-verify="required" placeholder="世界排行" autocomplete="off" class="layui-input layui-form-danger">
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">首登送金币</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="basic[firstgift]" value="{$info[basic]['firstgift']}" lay-verify="required" placeholder="100" autocomplete="off" class="layui-input layui-form-danger">
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">登陆页背景图</label>
+						    <div class="layui-input-block">
+								{php echo tpl_form_field_image('basic[loginimg]',$info[basic]['loginimg']);}
+								<span style="color:red;">建议尺寸1080*810</span>
+							</div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">答题页背景图</label>
+						    <div class="layui-input-block">
+								{php echo tpl_form_field_image('basic[answerimg]',$info[basic]['answerimg']);}
+								<span style="color:red;">建议尺寸1080*1920</span>
+							</div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">分享背景图</label>
+						    <div class="layui-input-block">
+								{php echo tpl_form_field_image('basic[shareimg]',$info[basic]['shareimg']);}
+								<span style="color:red;">建议尺寸1080*1525</span>
+							</div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">首页顶部图</label>
+						    <div class="layui-input-block">
+								{php echo tpl_form_field_image('basic[indextopimg]',$info[basic]['indextopimg']);}
+								<span style="color:red;">建议尺寸976*364</span>
+							</div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">排位赛顶部图</label>
+						    <div class="layui-input-block">
+								{php echo tpl_form_field_image('basic[dantopimg]',$info[basic]['dantopimg']);}
+								<span style="color:red;">建议尺寸976*364</span>
+							</div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">知识升级顶部图</label>
+						    <div class="layui-input-block">
+								{php echo tpl_form_field_image('basic[knowledgetopimg]',$info[basic]['knowledgetopimg']);}
+								<span style="color:red;">建议尺寸976*364</span>
+							</div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">匹配等待动态图片</label>
+						    <div class="layui-input-block">
+								{php echo tpl_form_field_image('basic[matchingimg]',$info[basic]['matchingimg']);}
+								<span style="color:red;">建议尺寸729*823</span>
+							</div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">匹配成功图片</label>
+						    <div class="layui-input-block">
+								{php echo tpl_form_field_image('basic[matchedimg]',$info[basic]['matchedimg']);}
+								<span style="color:red;">建议尺寸720*959</span>
+							</div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">首页背景音乐</label>
+						    <div class="layui-input-block">
+						    	{php echo tpl_form_field_audio('basic[indexbgm]',$info[basic]['indexbgm']);}
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">排位赛背景音乐</label>
+						    <div class="layui-input-block">
+						    	{php echo tpl_form_field_audio('basic[rankbgm]',$info[basic]['rankbgm']);}
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">客服入口图片</label>
+						    <div class="layui-input-block">
+								{php echo tpl_form_field_image('basic[kfinto]',$info[basic]['kfinto']);}
+								<span style="color:red;">建议尺寸720*959</span>
+							</div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">客服入口</label>
+						    <div class="layui-input-block">
+						      关注公众号<input type="radio" name="basic[kfbtn]" value="1" title="公众号" {if $info[basic]['kfbtn']==1} checked="checked"{/if}>
+						      小程序客服<input type="radio" name="basic[kfbtn]" value="2" title="小程序" {if $info[basic]['kfbtn']==2} checked="checked"{/if}>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">公众号关注图</label>
+						    <div class="layui-input-block">
+								{php echo tpl_form_field_image('basic[wxgzhimg]',$info[basic]['wxgzhimg']);}
+								<span style="color:red;">建议尺寸916*1508</span>
+							</div>
+						</div>
+					</div>
+					<div class="layui-tab-item">
+						<blockquote class="layui-elem-quote">
+							注意：用户每次答题设置
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">机器人正确率[%]</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="ques[rebotrate]" value="{$info[ques]['rebotrate']}" lay-verify="required" placeholder="80" autocomplete="off" class="layui-input layui-form-danger">
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">匹配时间</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="ques[match]" value="{$info[ques]['match']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						      <span style="color:red">用户每次答题前需要等待匹配的时间（单位：秒）</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">答题时间</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="ques[times]" value="{$info[ques]['times']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						       <span style="color:red">用户每次答题的过程中倒计时的时间（单位：秒）</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">最后3秒倒计时</label>
+						    <div class="layui-input-block">
+								{php echo tpl_form_field_audio('ques[descbgm]',$info[ques]['descbgm']);}
+							</div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">每秒分差</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="ques[secscore]" value="{$info[ques]['secscore']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						      <span style="color:red">用户在答题的过程中，都答对的情况下，1秒钟差多少分</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">最高分</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="ques[maxscore]" value="{$info[ques]['maxscore']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						      <span style="color:red">给每道题设置的1秒钟之内就答对了的本题最高分</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">最后一题得分</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="ques[lastscore]" value="{$info[ques]['lastscore']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">题目字体颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('ques[titlecolor]', $info[ques]['titlecolor']);}
+						    </div>
+						</div>
+						
+						<div class="layui-form-item">
+						    <label class="layui-form-label">题目数量</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="ques[quesnum]" value="{$info[ques]['quesnum']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						      <span style="color:red">用户在进行每局答题的时候，一共有几个题目</span>
+						    </div>
+						</div>
+
+						<div class="layui-form-item">
+						    <label class="layui-form-label">答题正确提示音</label>
+						    <div class="layui-input-block">
+						    	{php echo tpl_form_field_audio('ques[rightmp3]',$info[ques]['rightmp3']);}
+						    </div>
+						</div>
+
+						<div class="layui-form-item">
+						    <label class="layui-form-label">答题错误提示音</label>
+						    <div class="layui-input-block">
+						    	{php echo tpl_form_field_audio('ques[errormp3]',$info[ques]['errormp3']);}
+						    </div>
+						</div>
+					</div>
+					<div class="layui-tab-item">
+						<blockquote class="layui-elem-quote">
+							注意：用户转发，显示的内容
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">转发标题</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="forward[title]" value="{$info[forward]['title']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">转发图片</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('forward[img]',$info[forward]['img']);}
+						    </div>
+						</div>
+
+					</div>
+					<div class="layui-tab-item">
+						<blockquote class="layui-elem-quote">
+							注意：务必完成这3点配置，再去填写下方内容<br>
+								1.进入小程序公众平台后台->设置->开发设置 找到消息推送<br>
+								2.设置URL为:<mark>{$_W['siteroot']}app/index.php?i={$_W['uniacid']}&j={$_W['uniacid']}&c=entry&do=api&m=hc_answer</mark><br>
+								3.token和EncodingAESKey 随便填 无程序无关<br>
+								4.加密方式选择明文 不需加密；数据格式 选择JSON
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">关注图文标题</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="follow[title]" value="{$info[follow]['title']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">关注图文图片</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('follow[img]',$info[follow]['img']);}
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">关注图文概述</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="follow[desc]" value="{$info[follow]['desc']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">关注图文链接</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="follow[url]" value="{$info[follow]['url']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						    </div>
+						</div>
+					</div>
+					<div class="layui-tab-item">
+						<blockquote class="layui-elem-quote">
+							注意：请仔细阅读下方文字<br>
+								1.找到本答题模块“小程序”点击“管理”—点击“版本管理”—点击“修改”—把模块版本修改成和应用模块上的版本号一样。<br/>
+								2.在基础设置—审核设置—修改版本号和应用模块上的版本号一样。<br/>
+								3.点击“小程序”—点击“上传微信审核”—扫码后填写版本号也要和应用模块上的版本号一样。<br/>
+								4.这样提交审核的就是“过审页面”，不会影响线上版本的运营。<br/>
+								5.等审核通过之后，把基础设置-审核设置-里面的版本号一定要修改成和之前的版本号不一样。<br/>
+								6.以后在更新版本，同时遵循上方的操作。
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">审核中版本号</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="basic[version]" value="{$info[basic]['version']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						    </div>
+						</div>
+					</div>
+					<div class="layui-tab-item">
+						<blockquote class="layui-elem-quote">
+							公告设置
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">公告开关</label>
+						    <div class="layui-input-block">
+						      开启<input type="radio" name="notice[switch]" value="1" title="开启" {if $info[notice]['switch']==1} checked="checked"{/if}>
+						      关闭<input type="radio" name="notice[switch]" value="2" title="关闭" {if $info[notice]['switch']==2} checked="checked"{/if}>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">公告标题</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="notice[title]" value="{$info[notice]['title']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">公告内容</label>
+						    <div class="layui-input-block">
+						    	<textarea placeholder="请输入内容" name="notice[content]" class="layui-textarea">{$info[notice]['content']}</textarea>
+						    </div>
+						</div>
+					</div>
+					<div class="layui-tab-item">
+						<blockquote class="layui-elem-quote">
+							签到设置<br/>
+							注意：选择物品后，在输入框“:”后输入数量，如：2:2，表示编号为2的物品，签到奖励数量为2
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">第1天</label>
+						    <div class="layui-input-inline">
+						      <input type="text" name="sign[]" value="{$info[sign][0]}" class="layui-input layui-form-danger sign">
+						    </div>
+						    <a href="javascript:;" class="layui-btn addlibrary" >
+								<i class="layui-icon"></i> 选择物品
+							</a>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">第2天</label>
+						    <div class="layui-input-inline">
+						      <input type="text" name="sign[]" value="{$info[sign][1]}" class="layui-input layui-form-danger sign">
+						    </div>
+						    <a href="javascript:;" class="layui-btn addlibrary">
+								<i class="layui-icon"></i> 选择物品
+							</a>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">第3天</label>
+						    <div class="layui-input-inline">
+						      <input type="text" name="sign[]" value="{$info[sign][2]}" class="layui-input layui-form-danger sign">
+						    </div>
+						    <a href="javascript:;" class="layui-btn addlibrary">
+								<i class="layui-icon"></i> 选择物品
+							</a>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">第4天</label>
+						    <div class="layui-input-inline">
+						      <input type="text" name="sign[]" value="{$info[sign][3]}" class="layui-input layui-form-danger sign">
+						    </div>
+						    <a href="javascript:;" class="layui-btn addlibrary">
+								<i class="layui-icon"></i> 选择物品
+							</a>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">第5天</label>
+						    <div class="layui-input-inline">
+						      <input type="text" name="sign[]" value="{$info[sign][4]}" class="layui-input layui-form-danger sign">
+						    </div>
+						    <a href="javascript:;" class="layui-btn addlibrary">
+								<i class="layui-icon"></i> 选择物品
+							</a>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">第6天</label>
+						    <div class="layui-input-inline">
+						      <input type="text" name="sign[]" value="{$info[sign][5]}" class="layui-input layui-form-danger sign">
+						    </div>
+						    <a href="javascript:;" class="layui-btn addlibrary">
+								<i class="layui-icon"></i> 选择物品
+							</a>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">第7天</label>
+						    <div class="layui-input-inline">
+						      <input type="text" name="sign[]" value="{$info[sign][6]}" class="layui-input layui-form-danger sign">
+						    </div>
+						    <a href="javascript:;" class="layui-btn addlibrary">
+								<i class="layui-icon"></i> 选择物品
+							</a>
+						</div>
+					</div>
+					<div class="layui-tab-item">
+						<blockquote class="layui-elem-quote">
+							模板消息
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">题库功能提醒 模板ID</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="tpl[tk]" value="{$info[tpl]['tk']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						      <span>模板库ID AT0869 ,标题 题库功能提醒 , 选择关键词 题库功能、备注</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">挑战结果通知 模板ID</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="tpl[pk]" value="{$info[tpl]['pk']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						      <span>模板库ID AT0596 ,标题 挑战结果通知 , 选择关键词 挑战选手、挑战结果、挑战时间、备注信息</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">活动加入成功提醒 模板ID</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="tpl[act]" value="{$info[tpl]['act']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						      <span>模板库ID AT0856 ,标题 活动加入成功提醒 , 选择关键词 活动主题、活动时间、加入时间、温馨提示</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">领取成功通知 模板ID</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="tpl[red]" value="{$info[tpl]['red']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+						      <span>模板库ID AT0551 ,标题 领取成功通知 , 选择关键词 活动名称、领取金额、温馨提醒</span>
+						    </div>
+						</div>
+					</div>
+					<div class="layui-tab-item">
+						<blockquote class="layui-elem-quote">
+							赛季活动
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">活动开关</label>
+						    <div class="layui-input-block">
+						      开启<input type="radio" name="active[switch]" value="1" title="开启" {if $info[active]['switch']==1} checked="checked"{/if}>
+						      关闭<input type="radio" name="active[switch]" value="2" title="关闭" {if $info[active]['switch']==2} checked="checked"{/if}>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">活动名称</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="active[activename]" value="{$info[active]['activename']}" class="layui-input layui-form-danger">
+						      <span style="color:red;"></span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">达成段位</label>
+						    <div class="layui-input-block">
+						      <select name="active[condition]" lay-filter="condition">
+						        {loop $dan $item}
+						        	<option value="{$item['id']}" {if $info[active]['condition']==$item['id']}selected="selected"{/if}>{$item['name']}</option>
+						        {/loop}
+						      </select>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">活动入口图片</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('active[entry]',$info[active]['entry']);}
+						      <span style="color:red;">建议尺寸976*286</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">活动点击图片</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('active[click]',$info[active]['click']);}
+						      <span style="color:red;">建议尺寸902*888</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">活动达成提示图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('active[reachimg]',$info[active]['reachimg']);}
+						      <span style="color:red;">建议尺寸902*888</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">活动达成提示语</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="active[reachtext]" value="{$info[active]['reachtext']}" class="layui-input layui-form-danger">
+						      <span style="color:red;">新赛季开始后，用户上赛季达到规定的段位后，会提示用户获得瓜分百万红包资格提示语。</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">活动未达成提示图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('active[unreachimg]',$info[active]['unreachimg']);}
+						      <span style="color:red;">建议尺寸902*888</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">活动未达成提示语</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="active[unreachtext]" value="{$info[active]['unreachtext']}" class="layui-input layui-form-danger">
+						      <span style="color:red;">新赛季开始后，用户上赛季达到规定的段位后，会提示用户未获得瓜分百万红包资格提示语。</span>
+						    </div>
+						</div>
+						<br/>
+						<br/>
+						<blockquote class="layui-elem-quote">
+							虚拟瓜分总金额 ÷ 真实【每个人】瓜分金额 = 真实可以瓜分红包人数 + 虚拟人数上限<br/><br/>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当真实可以瓜分红包的人数增加，虚拟人数上限就会减少<br/>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;【例如】“真实参与人数”加1；“虚拟人数上限”就减1
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">虚拟瓜分总金额</label>
+						    <div class="layui-input-block">
+						      <input type="number" name="active[truemoney]" id="truemoney" value="{$info[active]['truemoney']}" lay-verify="required" class="layui-input layui-form-danger">
+						      <span style="color:red;">对应前端图片上显示的虚拟瓜分总金额数值，直接填写数字，不用带单位。</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">真实【每个人】瓜分金额</label>
+						    <div class="layui-input-block">
+						      <input type="number" name="active[money]" id="money" value="{$info[active]['money']}" lay-verify="required" class="layui-input layui-form-danger">
+						      <span style="color:red;">用户达到赛季规定的段位后，会提示用户赛季结束【每个人】分得的红包金额。</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">真实参与人数</label>
+						    <div class="layui-input-block">
+						      <input type="number" name="active[truepeople]" value="{$info[active]['truepeople']}" readonly="readonly" lay-verify="required" class="layui-input layui-form-danger">
+						    </div>
+						</div>
+
+						<div class="layui-form-item">
+						    <label class="layui-form-label">虚拟人数上限</label>
+						    <div class="layui-input-block">
+						      <input type="number" name="active[maxxnnum]" id="maxxnnum" value="{$info[active]['maxxnnum']}" readonly="readonly" lay-verify="required" class="layui-input layui-form-danger">
+						       <span style="color:red;">本赛季最高虚拟人数</span>
+						    </div>
+						</div>
+						<blockquote class="layui-elem-quote">
+							1.设置从多少“虚拟参与人数”开始，包括设置从第几天开始，进行增长虚拟人数。
+							<br/>
+							2.“虚拟参与人数”的增长不会超过“虚拟人数上限”
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">虚拟参与人数</label>
+						    <div class="layui-input-block">
+						      <input type="number" name="active[people]" value="{$info[active]['people']}" lay-verify="required" placeholder="4567" autocomplete="off" class="layui-input layui-form-danger">
+						      <span style="color:red;">从赛季第几天开始，每天随机增长到数字多少
+						      	为了体现出来真实的人数浮动，需要设置从多少虚拟人数开始，在赛季结束的时候，只要“真实瓜分金额”让用户觉得合理就行<br>
+						      	确保下方信息完善好之后，将此链接加入服务器计划任务中：<mark>{$_W['siteroot']}app/index.php?i={$_W['uniacid']}&from=wxapp&c=entry&a=wxapp&do=addpeople&m=hc_answer</mark>,{$plan}
+						      </span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">从第几天开始</label>
+						    <div class="layui-input-block">
+						      <input type="number" name="active[xnnumstart]" value="{$info[active]['xnnumstart']}" lay-verify="required" class="layui-input layui-form-danger">
+						       <span style="color:red;">从赛季第几天开始</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">红包发放提示</label>
+						    <div class="layui-input-block">
+						      <input type="type" name="active[moneytime]" value="{$info[active]['moneytime']}" lay-verify="required" placeholder="[例如]恭喜挑战成功，本赛季结束后瓜分红包，会在赛季结束后24小时之内发放到您的微信零钱" autocomplete="off" class="layui-input layui-form-danger">
+						      <span style="color:red;">用户达到赛季规定的段位后，给客户提示什么时候瓜分红包。<br/>
+						      	[例如]恭喜挑战成功，本赛季结束后瓜分红包，会直接发放到您的微信零钱。
+						      </span>
+						    </div>
+						</div>
+					</div>
+					<div class="layui-tab-item">
+						<blockquote class="layui-elem-quote">
+							入口页主题设置
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">主题颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[maincolor]', $info[basic]['maincolor']);}
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">主题头部字体</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[fontcolor]', $info[basic]['fontcolor']);}
+						      <span style="color:red;">主题颜色和主题头部文字必须同时设置，头部文字仅支持 #ffffff 和 #000000
+						      </span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">昵称|客服颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[nicknamecolor]', $info[basic]['nicknamecolor']);}
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">金币|物品|星级背景颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[goldbgcolor]', $info[basic]['goldbgcolor']);}
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">金币|活动人数字体颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[goldfontcolor]', $info[basic]['goldfontcolor']);}
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">等级进度条颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[jdbarcolor]', $info[basic]['jdbarcolor']);}
+						    </div>
+						</div>
+						<blockquote class="layui-elem-quote">
+							排行榜主题设置
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">Tab字体颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[tabfontcolor]', $info[basic]['tabfontcolor']);}
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">段位背景颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[rankbgcolor]', $info[basic]['rankbgcolor']);}
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">排行榜昵称背景颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[listbgcolor]', $info[basic]['listbgcolor']);}
+						    </div>
+						</div>
+						<blockquote class="layui-elem-quote">
+							答题主题设置
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">答题分数进度条颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[ansscorebarcolor]', $info[basic]['ansscorebarcolor']);}
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">答题分数进度条背景颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[ansscorebarbgcolor]', $info[basic]['ansscorebarbgcolor']);}
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">答题左侧用户颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[ansleftcolor]', $info[basic]['ansleftcolor']);}
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">答题右侧用户颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[ansrightcolor]', $info[basic]['ansrightcolor']);}
+						    </div>
+						</div>
+						<blockquote class="layui-elem-quote">
+							知识书主题设置
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">知识书左侧颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[zssleftcolor]', $info[basic]['zssleftcolor']);}
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">知识书右侧颜色</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_color('basic[zssrightcolor]', $info[basic]['zssrightcolor']);}
+						    </div>
+						</div>
+					</div>
+					<div class="layui-tab-item">
+						<blockquote class="layui-elem-quote">
+							主题图片设置
+						</blockquote>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">赛季奖励背景图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[seasonbgimg]',$info[basic]['seasonbgimg']);}
+						      <span style="color:red;">建议尺寸976*1656</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">答题胜利图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[anssuccessimg]',$info[basic]['anssuccessimg']);}
+						      <span style="color:red;">建议尺寸976*1656</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">答题平局图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[ansdrawimg]',$info[basic]['ansdrawimg']);}
+						      <span style="color:red;">建议尺寸976*1656</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">赛季开启背景图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[owninfoimg]',$info[basic]['owninfoimg']);}
+						      <span style="color:red;">建议尺寸976*292</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">个人能力二维码图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[ownpowerimg]',$info[basic]['ownpowerimg']);}
+						      <span style="color:red;">建议尺寸100*100</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">个人收款码图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[ownmoneyimg]',$info[basic]['ownmoneyimg']);}
+						      <span style="color:red;">建议尺寸73*73</span>
+						    </div>
+						</div>
+
+						<div class="layui-form-item">
+						    <label class="layui-form-label">排位赛段位列表入口图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[danintoimg]',$info[basic]['danintoimg']);}
+						      <span style="color:red;">建议尺寸80*80</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">好友对战邀请按钮图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[inviteimg]',$info[basic]['inviteimg']);}
+						      <span style="color:red;">建议尺寸103*93</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">好友对战放弃按钮图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[giveupimg]',$info[basic]['giveupimg']);}
+						      <span style="color:red;">建议尺寸100*99</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">滚动条图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[gdbarimg]',$info[basic]['gdbarimg']);}
+						      <span style="color:red;">建议尺寸950*40</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">星级展示图标</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[starlevelimg]',$info[basic]['starlevelimg']);}
+						      <span style="color:red;">建议尺寸60*60</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">匹配成功头像信息展示左侧背景图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[avatarleftimg]',$info[basic]['avatarleftimg']);}
+						      <span style="color:red;">建议尺寸438*387</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">匹配成功头像信息展示右侧背景图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[avatarrightimg]',$info[basic]['avatarrightimg']);}
+						      <span style="color:red;">建议尺寸438*387</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">匹配成功间隔线</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[pplineimg]',$info[basic]['pplineimg']);}
+						      <span style="color:red;">建议尺寸362*18</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">双倍得分图片</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[doublescoreimg]',$info[basic]['doublescoreimg']);}
+						      <span style="color:red;">建议尺寸720*102</span>
+						    </div>
+						</div>					
+						<div class="layui-form-item">
+						    <label class="layui-form-label">答题中题目分类展示背景图</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[questypeimg]',$info[basic]['questypeimg']);}
+						      <span style="color:red;">建议尺寸460*240</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">排行榜名次背景图标</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[ranknumimg]',$info[basic]['ranknumimg']);}
+						      <span style="color:red;">建议尺寸150*150</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">个人能力图分享图标</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[ownpowershareimg]',$info[basic]['ownpowershareimg']);}
+						      <span style="color:red;">建议尺寸86*95</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">经验图标</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[expeimg]',$info[basic]['expeimg']);}
+						      <span style="color:red;">建议尺寸92*92</span>
+						    </div>
+						</div>
+						<div class="layui-form-item">
+						    <label class="layui-form-label">金币图标</label>
+						    <div class="layui-input-block">
+						      {php echo tpl_form_field_image('basic[goldimg]',$info[basic]['goldimg']);}
+						      <span style="color:red;">建议尺寸92*92</span>
+						    </div>
+						</div>
+
+
+					</div>
+					<div class="layui-form-item">
+					    <div class="layui-input-block">
+					      <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="setadd" style="pointer-events: auto;">保存</button>
+					      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+					    </div>
+					</div>
+				</div>
+			</div>
+			</form>
+		</div>
+		<script type="text/javascript" src="/addons/hc_answer/template/plugins/layui/layui.js"></script>
+		<script>
+			layui.use(['element','form'], function() {
+				var $ = layui.jquery,
+				element = layui.element(),
+				form = layui.form();
+				form.render();
+				form.on('submit(setadd)', function(data) {
+					$.ajax({
+			            url:"{php echo $this->createWebUrl('basicdo');php}",
+			            data:$('#form').serialize(),
+			            type:"post",
+			            dataType:"json",
+			            success:function(data){
+			            	if(data.code=='1'){
+			                	layer.alert(data.msg, {icon: 6},function(index){
+			                		layer.close(index)
+			                	});
+								
+			            	}else{
+			                	layer.alert(data.msg, {icon: 5});
+			            	}
+			            },
+			            error:function(data){
+			                layer.alert('请稍后重试', {icon: 5});
+			            }
+			        });
+					return false;
+				});
+				$("#truemoney").keyup(function(){
+					var truemoney = $(this).val();
+					var money = $("#money").val();
+					$("#maxxnnum").val(Math.round(truemoney/money));
+				})
+				$("#money").keyup(function(){
+					var truemoney = $("#truemoney").val();
+					var money = $(this).val();
+					$("#maxxnnum").val(Math.round(truemoney/money));
+				})
+				$('#refresh').on('click', function() {
+					location.reload();
+				});
+				$('#startsocket').on('click', function() {
+					$.ajax({
+			            url:"{php echo $this->createWebUrl('startsocket');php}",
+			            type:"post",
+			            dataType:"json",
+			            success:function(data){
+			            	if(data.code=='1'){
+			                	layer.alert(data.msg, {icon: 6},function(index){
+			                		layer.close(index)
+			                	});
+								
+			            	}else{
+			                	layer.alert(data.msg, {icon: 5});
+			            	}
+			            },
+			            error:function(data){
+			                layer.alert('请稍后重试', {icon: 5});
+			            }
+			        });
+				});
+				
+
+				$(".addlibrary").click(function(){
+					var that = this
+					layer.open({
+					  type: 2,
+					  area: ['900px', '650px'],
+					  fixed: false, //不固定
+					  maxmin: true,
+					  content: './index.php?c=site&a=entry&do=selectprop&m=hc_answer',
+					  btn: ['确定','关闭'],
+                      yes: function(index){
+					  		var res = window["layui-layer-iframe" + index].callbackdata();
+					  		$(that).prev().find(".sign").val(res+':');
+	                        //最后关闭弹出层
+	                        layer.close(index);
+	                    },
+	                    cancel: function(){
+	                        //右上角关闭回调
+	                    }
+					});
+				});
+
+				$(".mselect").change(function(){
+					var res = $(this).val();
+					if(res=='h5'){
+						$(this).parent().parent().parent().find(".h5ad").show()
+					}else{
+						$(this).parent().parent().parent().find(".h5ad").hide()
+					}
+				})
+
+
+			});
+		</script>
+
+	</body>
+
+</html>

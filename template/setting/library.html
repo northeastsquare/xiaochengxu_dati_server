@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Table</title>
+		<link rel="stylesheet" href="/addons/hc_answer/template/plugins/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/global.css" media="all">
+		<link rel="stylesheet" type="text/css" href="/addons/hc_answer/template/plugins/font-awesome/css/font-awesome.css">
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/table.css" />
+	</head>
+	<body>
+		<div class="admin-main">
+			<blockquote class="layui-elem-quote">
+				<div class="layui-inline">
+					<select class="layui-input" id="cate_id">
+						<option value="">全部分类</option>
+						{loop $cate $item}
+						<optgroup label="{$item['name']}">
+						{loop $item['children'] $v}
+							<option value="{$v['id']}" {if $v['id'] == $cate_id}selected="selected"{/if}>{$v['name']}</option>
+						{/loop}
+						</optgroup>
+						{/loop}
+					</select>
+				</div>
+				<div class="layui-inline">
+					<select class="layui-input" id="easy">
+						<option value="">全部难度</option>
+						<optgroup label="难易度">
+							<option value="1" {if $easy == 1}selected="selected"{/if}>简单</option>
+							<option value="2" {if $easy == 2}selected="selected"{/if}>一般</option>
+							<option value="3" {if $easy == 3}selected="selected"{/if}>复杂</option>
+						</optgroup>
+					</select>
+				</div>
+				<div class="layui-inline">
+			    	<input class="layui-input" id="question" value="{$question}" placeholder="题目内容">
+			  	</div>
+				<a href="javascript:;" class="layui-btn layui-btn-small" id="search">
+					<i class="layui-icon">&#xe615;</i> 搜索
+				</a>
+				<a href="javascript:;" class="layui-btn layui-btn-normal layui-btn-small" id="add">
+					<i class="layui-icon">&#xe608;</i> 添加题目
+				</a>
+				<a href="javascript:;" class="layui-btn layui-btn-danger layui-btn-small" id="import">
+					<i class="layui-icon">&#xe62f;</i> 导入题库
+				</a>
+				<a href="javascript:;" class="layui-btn layui-btn-normal layui-btn-small" id="notice">
+					<i class="layui-icon">&#xe645;</i> 更新通知
+				</a>
+
+				<a href="javascript:;" class="layui-btn layui-btn-small" id="refresh">
+					<i class="layui-icon">&#x1002;</i> 刷新
+				</a>
+			</blockquote>
+			<fieldset class="layui-elem-field">
+				<legend>题目列表</legend>
+				<div class="layui-field-box">
+					<table class="site-table table-hover">
+						<thead>
+							<tr>
+								<th><input type="checkbox" id="selected-all"></th>
+								<th>所属分类</th>
+								<th>题目</th>
+								<th>答案A</th>
+								<th>答案B</th>
+								<th>答案C</th>
+								<th>答案D</th>
+								<th>难易度</th>
+								<th>正确答案</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+						<tfoot>
+							<tr>
+								<th><button class="layui-btn layui-btn-small" id="sure">删除</button></th>
+								<th colspan="9" style="color:red">
+									注意：题目删除之后，记得去【排位设置】中【更新题目】，避免排位题目出现问题
+								</th>
+							</tr>
+				
+						</tfoot>
+					</table>
+
+				</div>
+			</fieldset>
+			<div class="admin-table-page">
+				<div id="page" class="page">
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="/addons/hc_answer/template/plugins/layui/layui.js"></script>
+		<script>
+			layui.config({
+				base: '/addons/hc_answer/template/plugins/layui/modules/'
+			});
+
+			layui.use(['icheck', 'laypage','layer'], function() {
+				var $ = layui.jquery,
+					laypage = layui.laypage,
+					layer = parent.layer === undefined ? layui.layer : parent.layer;
+				$('input').iCheck({
+					checkboxClass: 'icheckbox_flat-green'
+				});
+				$('#sure').on('click', function() {
+					var groupCheckbox=$("input[name='ck']");
+					var functional="";
+					for(i=0;i<groupCheckbox.length;i++){
+					    if(groupCheckbox[i].checked){
+					        var val =groupCheckbox[i].value;
+					        if(functional.length>0){
+					        	 functional+=","+val;
+					        }else{
+					        	functional+=val;
+					        }
+					    }
+					}
+					layer.confirm('确定要删除吗？', {
+						btn: ['确认','取消'],
+						end: function () {
+					        location.reload();
+					    }
+					}, function(){
+						$.ajax({
+				            url:"{php echo $this->createWebUrl('librarydo',array('act'=>'alldel'));php}",
+				            data:{ids:functional},
+				            type:"post",
+				            dataType:"json",
+				            success:function(data){
+				            	if(data.code=='1'){
+				                	layer.alert(data.msg, {icon: 6});
+				            	}else{
+				                	layer.alert(data.msg, {icon: 5});
+				            	}
+				            },
+				            error:function(data){
+				                layer.alert('请稍后重试', {icon: 5});
+				            }
+				        });
+					})
+				});
+				
+				//page
+				laypage({
+					cont: 'page',
+					pages: {$nums},
+					groups: 10,
+					jump: function(obj, first) {
+						//得到了当前页，用于向服务端请求对应数据
+						var curr = obj.curr;
+						var cate_id = $("#cate_id").val();
+						var question= $("#question").val();
+						var easy = $("#easy").val();
+						var html ='';
+						$.ajax({
+				            url:"{php echo $this->createWebUrl('libraryajax');php}",
+				            data:{page:curr,cate_id:cate_id,question:question,easy:easy},
+				            type:"post",
+				            dataType:"json",
+				            success:function(data){
+				            	layui.each(data.data, function(index, item){
+				            		html += '<tr>';
+				            		html += '<td><input type="checkbox" name="ck" value="'+item.id+'"></td>';
+							      	html += '<td>'+item.type_id+'</td>';
+							      	html += '<td>'+item.question+'</td>';
+							      	html += '<td>'+item.answer_a+'</td>';
+							      	html += '<td>'+item.answer_b+'</td>';
+							      	html += '<td>'+item.answer_c+'</td>';
+							      	html += '<td>'+item.answer_d+'</td>';
+							      	html += '<td>'+item.easy+'</td>';
+							      	html += '<td>'+item.answer+'</td>';
+							      	html += '<td><a href="javascript:;" class="layui-btn layui-btn-mini" data-id="'+item.id+'" id="edit">编辑</a>&nbsp;&nbsp;';
+							      	html += '<a href="javascript:;" data-id="'+item.id+'" id="del" class="layui-btn layui-btn-danger layui-btn-mini">删除</a></td>';
+							      	html += '</tr>';
+							    });
+							    $("tbody").html(html);
+				            },
+				            error:function(data){
+				                layer.alert('请稍后重试', {icon: 5});
+				            }
+				        });
+						
+					}
+				});
+
+				$('#search').on('click', function() {
+					var cate_id = $("#cate_id").val();
+					var question= $("#question").val();
+					var easy = $("#easy").val();
+					location.href='./index.php?c=site&a=entry&do=library&m=hc_answer&cate_id='+cate_id+'&question='+question+'&easy='+easy
+				});
+				$('#refresh').on('click', function() {
+					location.reload();
+				});
+				$('#add').on('click', function() {
+					layer.open({
+					  type: 2,
+					  area: ['900px', '650px'],
+					  fixed: false, //不固定
+					  maxmin: true,
+					  content: './index.php?c=site&a=entry&do=libraryadd&m=hc_answer',
+					  end: function () {
+				        location.reload();
+				      }
+					});
+				});
+				$('#import').on('click', function() {
+					layer.open({
+					  type: 2,
+					  area: ['900px', '650px'],
+					  fixed: false, //不固定
+					  maxmin: true,
+					  content: './index.php?c=site&a=entry&do=libraryimport&m=hc_answer',
+					  end: function () {
+				        location.reload();
+				      }
+					});
+				});
+				$('#notice').on('click', function() {
+					layer.open({
+					  type: 2,
+					  area: ['900px', '650px'],
+					  fixed: false, //不固定
+					  maxmin: true,
+					  content: './index.php?c=site&a=entry&do=librarynotice&m=hc_answer',
+					  end: function () {
+				        location.reload();
+				      }
+					});
+				});
+
+				$('tbody').on('click', '#edit',function() {
+					var id = $(this).attr('data-id');
+					layer.open({
+					  type: 2,
+					  area: ['900px', '650px'],
+					  fixed: false, //不固定
+					  maxmin: true,
+					  content: './index.php?c=site&a=entry&do=libraryadd&m=hc_answer&id='+id,
+					  end: function () {
+				        location.reload();
+				      }
+					});
+				});
+
+
+				$('tbody').on('click', '#del',function() {
+					var id = $(this).attr('data-id');
+					layer.confirm('确定要删除吗？', {
+						btn: ['确认','取消'],
+						end: function () {
+					        location.reload();
+					    }
+					}, function(){
+						$.ajax({
+				            url:"{php echo $this->createWebUrl('librarydo');php}",
+				            data:{id:id,act:'del'},
+				            type:"post",
+				            dataType:"json",
+				            success:function(data){
+				            	if(data.code=='1'){
+				                	layer.alert(data.msg, {icon: 6});
+				            	}else{
+				                	layer.alert(data.msg, {icon: 5});
+				            	}
+				            },
+				            error:function(data){
+				                layer.alert('请稍后重试', {icon: 5});
+				            }
+				        });
+					});
+				});
+				$('.site-table tbody tr').on('click', function(event) {
+					var $this = $(this);
+					var $input = $this.children('td').eq(0).find('input');
+					$input.on('ifChecked', function(e) {
+						$this.css('background-color', '#EEEEEE');
+					});
+					$input.on('ifUnchecked', function(e) {
+						$this.removeAttr('style');
+					});
+					$input.iCheck('toggle');
+				}).find('input').each(function() {
+					var $this = $(this);
+					$this.on('ifChecked', function(e) {
+						$this.parents('tr').css('background-color', '#EEEEEE');
+					});
+					$this.on('ifUnchecked', function(e) {
+						$this.parents('tr').removeAttr('style');
+					});
+				});
+				$('#selected-all').on('ifChanged', function(event) {
+					var $input = $('.site-table tbody tr td').find('input');
+					$input.iCheck(event.currentTarget.checked ? 'check' : 'uncheck');
+				});
+				
+
+			});
+		</script>
+	</body>
+

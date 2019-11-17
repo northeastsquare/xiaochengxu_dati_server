@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.we7.cc" versionCode="">
+	<application setting="false">
+		<name><![CDATA[答题王]]></name>
+		<identifie><![CDATA[hc_answer]]></identifie>
+		<version><![CDATA[2.2.2]]></version>
+		<type><![CDATA[biz]]></type>
+		<ability><![CDATA[答题风暴]]></ability>
+		<description><![CDATA[答题风暴]]></description>
+		<author><![CDATA[泉州大白网络科技]]></author>
+		<url><![CDATA[泉州大白网络科技]]></url>
+	</application>
+	<platform>
+		<subscribes>
+		</subscribes>
+		<handles>
+		</handles>
+		<rule embed="false" />
+		<card embed="false" />
+		<supports>
+			<item type="wxapp" />
+		</supports>
+	</platform>
+	<bindings>
+		<menu>
+			<entry title="管理后台" do="home" state="" direct="false" />
+		</menu>
+		<page>
+			<entry title="首页" do="/hc_answer/pages/index/index" state="" direct="" />
+		</page>
+	</bindings>
+	<permissions>
+	</permissions>
+	<install><![CDATA[DROP TABLE IF EXISTS `ims_hc_ad`;
+CREATE TABLE `ims_hc_ad` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `appid` varchar(50) NOT NULL,
+  `path` varchar(200) NOT NULL,
+  `desc` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_bonus`;
+CREATE TABLE `ims_hc_bonus` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `sid` int(11) NOT NULL,
+  `money` decimal(10,2) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  `addtime` char(10) NOT NULL,
+  `dealtime` char(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_dan`;
+CREATE TABLE `ims_hc_dan` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT NULL,
+  `dan_id` int(11) NOT NULL,
+  `season` tinyint(3) NOT NULL,
+  `name` varchar(20) DEFAULT NULL,
+  `thumb` varchar(100) DEFAULT NULL,
+  `win_star` tinyint(3) DEFAULT '0',
+  `use_gold` int(11) DEFAULT '0',
+  `win_gold` int(11) DEFAULT '0',
+  `quesids` text NOT NULL,
+  `reward` int(11) NOT NULL DEFAULT '0',
+  `winexp` int(11) NOT NULL,
+  `failexp` int(11) NOT NULL,
+  `rewardnum` tinyint(3) NOT NULL DEFAULT '0',
+  `border` varchar(200) NOT NULL,
+  `createtime` char(10) DEFAULT NULL,
+  `robot` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1开启',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_formid`;
+CREATE TABLE `ims_hc_formid` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `formid` varchar(50) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=383 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_grade`;
+CREATE TABLE `ims_hc_grade` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) NOT NULL,
+  `levelno` int(11) NOT NULL,
+  `levelname` varchar(20) NOT NULL,
+  `levelexp` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_order`;
+CREATE TABLE `ims_hc_order` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT '0',
+  `uid` int(11) DEFAULT '0',
+  `pid` int(11) DEFAULT '0',
+  `ordersn` varchar(30) DEFAULT '',
+  `formId` varchar(50) DEFAULT '',
+  `fee` decimal(11,2) NOT NULL,
+  `status` tinyint(1) DEFAULT '0',
+  `paystatus` tinyint(1) NOT NULL DEFAULT '0',
+  `paytime` char(10) NOT NULL,
+  `transid` varchar(50) DEFAULT '',
+  `createtime` int(10) DEFAULT '0',
+  `package` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_pk_log`;
+CREATE TABLE `ims_hc_pk_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT NULL,
+  `rid` int(11) DEFAULT NULL,
+  `uid` int(11) DEFAULT NULL,
+  `usegold` int(11) NOT NULL,
+  `score` int(11) NOT NULL,
+  `gold` int(11) NOT NULL,
+  `expe` int(11) NOT NULL,
+  `scoreplus` int(11) NOT NULL,
+  `goldplus` int(11) NOT NULL,
+  `expeplus` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=230 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_pk_question`;
+CREATE TABLE `ims_hc_pk_question` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) NOT NULL,
+  `rid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `qid` int(11) NOT NULL,
+  `answer` char(1) NOT NULL,
+  `plus` int(5) DEFAULT '0',
+  `score` int(5) DEFAULT '0',
+  `min` int(11) NOT NULL,
+  `right` tinyint(1) NOT NULL DEFAULT '0',
+  `addtime` char(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1944 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_pk_record`;
+CREATE TABLE `ims_hc_pk_record` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT NULL,
+  `dan` int(11) NOT NULL,
+  `userid_one` int(11) DEFAULT NULL,
+  `userid_two` int(11) DEFAULT NULL,
+  `userone_score` int(11) DEFAULT '0',
+  `usertwo_score` int(11) DEFAULT '0',
+  `questions` text NOT NULL,
+  `status1` tinyint(1) NOT NULL DEFAULT '0',
+  `status2` tinyint(1) NOT NULL DEFAULT '0',
+  `createtime` char(10) DEFAULT NULL,
+  `type` tinyint(1) DEFAULT '0' COMMENT '1好友对战',
+  `leave` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1加入2开始3离开',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=326 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_prop`;
+CREATE TABLE `ims_hc_prop` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT NULL,
+  `name` varchar(20) DEFAULT NULL,
+  `thumb` varchar(200) DEFAULT NULL,
+  `usethumb` varchar(200) NOT NULL,
+  `newthumb` varchar(200) NOT NULL,
+  `cc` int(4) NOT NULL DEFAULT '0',
+  `sj` int(4) NOT NULL DEFAULT '0',
+  `jb` int(4) NOT NULL DEFAULT '0',
+  `jy` int(4) NOT NULL DEFAULT '0',
+  `jf` int(11) NOT NULL,
+  `give` tinyint(1) NOT NULL DEFAULT '0',
+  `remark` varchar(50) NOT NULL,
+  `price` decimal(11,2) DEFAULT '0.00',
+  `type` tinyint(1) DEFAULT '0' COMMENT '默认普通物品',
+  `shop` tinyint(1) NOT NULL DEFAULT '0',
+  `dan` tinyint(1) NOT NULL,
+  `randnum` tinyint(4) NOT NULL,
+  `desc` varchar(200) NOT NULL,
+  `sort` int(11) NOT NULL DEFAULT '50',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_question`;
+CREATE TABLE `ims_hc_question` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT NULL,
+  `type_id` int(11) DEFAULT NULL,
+  `question` varchar(100) DEFAULT NULL,
+  `answer_a` varchar(100) DEFAULT NULL,
+  `answer_b` varchar(100) DEFAULT NULL,
+  `answer_c` varchar(100) NOT NULL,
+  `answer_d` varchar(100) DEFAULT NULL,
+  `easy` char(1) DEFAULT NULL,
+  `answer` char(1) DEFAULT NULL,
+  `createtime` char(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5033 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_question_type`;
+CREATE TABLE `ims_hc_question_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT NULL,
+  `thumbs` varchar(100) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL,
+  `pid` int(11) DEFAULT '0',
+  `upgrade` text NOT NULL,
+  `desc1` varchar(200) NOT NULL,
+  `desc2` varchar(200) NOT NULL,
+  `createtime` char(10) DEFAULT NULL,
+  `sort` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_season`;
+CREATE TABLE `ims_hc_season` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) NOT NULL,
+  `no` int(11) NOT NULL DEFAULT '1',
+  `name` varchar(20) NOT NULL,
+  `starttime` char(10) NOT NULL,
+  `endtime` char(10) NOT NULL,
+  `createtime` char(10) NOT NULL,
+  `status` char(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_setting`;
+CREATE TABLE `ims_hc_setting` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) NOT NULL,
+  `index` text NOT NULL,
+  `basic` text NOT NULL,
+  `ques` text NOT NULL,
+  `follow` text NOT NULL,
+  `forward` text NOT NULL,
+  `notice` text NOT NULL,
+  `sign` text NOT NULL,
+  `tpl` text NOT NULL,
+  `active` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_shenhe`;
+CREATE TABLE `ims_hc_shenhe` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT NULL,
+  `stact` int(11) NOT NULL DEFAULT '0',
+  `name` varchar(255) DEFAULT NULL,
+  `time` datetime DEFAULT NULL,
+  `sort` int(11) DEFAULT NULL,
+  `img` varchar(255) DEFAULT NULL,
+  `content` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_user`;
+CREATE TABLE `ims_hc_user` (
+  `uid` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT NULL,
+  `avatar` varchar(200) DEFAULT NULL,
+  `nickname` varchar(50) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL,
+  `sessionkey` varchar(50) NOT NULL,
+  `gender` tinyint(1) NOT NULL,
+  `province` varchar(50) DEFAULT NULL,
+  `city` varchar(50) DEFAULT NULL,
+  `country` varchar(50) DEFAULT NULL,
+  `createtime` char(10) DEFAULT NULL,
+  `status` char(1) DEFAULT '1',
+  `robot` char(1) NOT NULL DEFAULT '0',
+  `inans` char(1) NOT NULL DEFAULT '0',
+  `border` varchar(100) NOT NULL,
+  `moneycode` varchar(200) NOT NULL,
+  `unionid` varchar(50) NOT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=158 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_user_cate`;
+CREATE TABLE `ims_hc_user_cate` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) NOT NULL DEFAULT '0',
+  `uid` int(11) NOT NULL DEFAULT '0',
+  `tid` int(11) NOT NULL DEFAULT '0',
+  `level` int(11) NOT NULL DEFAULT '0',
+  `plus` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_user_catelog`;
+CREATE TABLE `ims_hc_user_catelog` (
+  `weid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `tid` int(11) NOT NULL,
+  `before` int(11) NOT NULL,
+  `now` int(11) NOT NULL,
+  `book` int(11) NOT NULL,
+  `num` int(11) NOT NULL,
+  `gold` int(11) NOT NULL,
+  `createtime` char(10) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_user_forward`;
+CREATE TABLE `ims_hc_user_forward` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `openGId` varchar(30) NOT NULL,
+  `createtime` char(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_user_friends`;
+CREATE TABLE `ims_hc_user_friends` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `fid` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_user_gold`;
+CREATE TABLE `ims_hc_user_gold` (
+  `weid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `gold` int(11) NOT NULL,
+  `type` int(11) NOT NULL DEFAULT '0' COMMENT '0加1减',
+  `source` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0答题1分享',
+  `addtime` char(10) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_user_history`;
+CREATE TABLE `ims_hc_user_history` (
+  `uid` int(11) DEFAULT '0',
+  `weid` int(11) DEFAULT '0',
+  `sid` int(11) NOT NULL DEFAULT '0',
+  `level` tinyint(3) DEFAULT '1',
+  `expe` int(11) DEFAULT '0',
+  `dan` int(11) DEFAULT '1',
+  `star` int(11) DEFAULT '0',
+  `winrate` varchar(10) DEFAULT '0',
+  `totalnum` int(11) DEFAULT '0',
+  `winnum` int(11) DEFAULT '0',
+  `status` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_user_info`;
+CREATE TABLE `ims_hc_user_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` int(11) DEFAULT '0',
+  `weid` int(11) DEFAULT '0',
+  `sid` int(11) NOT NULL DEFAULT '0',
+  `level` tinyint(3) DEFAULT '1',
+  `expe` int(11) DEFAULT '0',
+  `maxexpe` int(11) DEFAULT '0',
+  `dan` int(11) DEFAULT '1',
+  `star` int(11) DEFAULT '0',
+  `gold` int(11) DEFAULT '0',
+  `winrate` varchar(10) DEFAULT '0',
+  `totalnum` int(11) DEFAULT '0',
+  `winnum` int(11) DEFAULT '0',
+  `jbtime` char(10) NOT NULL,
+  `jbnum` int(11) NOT NULL,
+  `jytime` char(10) NOT NULL,
+  `jynum` int(11) NOT NULL,
+  `jfnum` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=158 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_user_prop`;
+CREATE TABLE `ims_hc_user_prop` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT '0',
+  `uid` int(11) NOT NULL,
+  `pid` int(11) DEFAULT '0',
+  `num` int(11) DEFAULT '0',
+  `usenum` tinyint(4) NOT NULL DEFAULT '0',
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=176 DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_user_proplog`;
+CREATE TABLE `ims_hc_user_proplog` (
+  `weid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `pid` int(11) NOT NULL,
+  `type` char(1) DEFAULT NULL COMMENT '1签到2充值3系统赠送4使用5开宝箱',
+  `top` int(11) NOT NULL,
+  `num` int(11) DEFAULT NULL,
+  `createtime` char(10) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `ims_hc_user_sign`;
+CREATE TABLE `ims_hc_user_sign` (
+  `weid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `sid` int(11) NOT NULL,
+  `date` char(10) NOT NULL,
+  `signtime` char(10) NOT NULL,
+  `pid` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+]]></install>
+	<uninstall><![CDATA[]]></uninstall>
+	<upgrade><![CDATA[update.php]]></upgrade>
+</manifest>

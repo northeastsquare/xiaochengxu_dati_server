@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Layui</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link rel="stylesheet" href="/addons/hc_answer/template/plugins/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/global.css" media="all">
+		<link rel="stylesheet" type="text/css" href="/addons/hc_answer/template/plugins/font-awesome/css/font-awesome.css">
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/table.css" />
+		<link rel="shortcut icon" href="./resource/images/favicon.ico" />
+		<link href="./resource/css/bootstrap.min.css?v=20170915" rel="stylesheet">
+		<link href="./resource/css/common.css?v=20170915" rel="stylesheet">
+		<script type="text/javascript">
+			if(navigator.appName == 'Microsoft Internet Explorer'){
+				if(navigator.userAgent.indexOf("MSIE 5.0")>0 || navigator.userAgent.indexOf("MSIE 6.0")>0 || navigator.userAgent.indexOf("MSIE 7.0")>0) {
+					alert('您使用的 IE 浏览器版本过低, 推荐使用 Chrome 浏览器或 IE8 及以上版本浏览器.');
+				}
+			}
+			window.sysinfo = {
+				{if !empty($_W['uniacid'])}'uniacid': '{$_W['uniacid']}',{/if}
+				{if !empty($_W['acid'])}'acid': '{$_W['acid']}',{/if}
+				{if !empty($_W['openid'])}'openid': '{$_W['openid']}',{/if}
+				{if !empty($_W['uid'])}'uid': '{$_W['uid']}',{/if}
+				'isfounder': {if !empty($_W['isfounder'])}1{else}0{/if},
+				'family': '{IMS_FAMILY}',
+				'siteroot': '{$_W['siteroot']}',
+				'siteurl': '{$_W['siteurl']}',
+				'attachurl': '{$_W['attachurl']}',
+				'attachurl_local': '{$_W['attachurl_local']}',
+				'attachurl_remote': '{$_W['attachurl_remote']}',
+				'module' : {'url' : '{if defined('MODULE_URL')}{MODULE_URL}{/if}', 'name' : '{if defined('IN_MODULE')}{IN_MODULE}{/if}'},
+				'cookie' : {'pre': '{$_W['config']['cookie']['pre']}'},
+				'account' : {php echo json_encode($_W['account'])},
+				'server' : {'php' : '{php echo phpversion()}'},
+			};
+		</script>
+		<script>var require = { urlArgs: 'v=20170915' };</script>
+		<script type="text/javascript" src="./resource/js/lib/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="./resource/js/lib/bootstrap.min.js"></script>
+		<script type="text/javascript" src="./resource/js/app/util.js?v=20170915"></script>
+		<script type="text/javascript" src="./resource/js/app/common.min.js?v=20170915"></script>
+		<script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+		<style type="text/css">
+			body{
+				background-color:#fff;
+				min-width: 100%;
+			}
+			.layui-form-pane .layui-form-label{
+				width: 120px
+			}
+			.input-group .form-control{
+				width:430px;
+			}
+			.layui-input{
+				width:500px;
+			}
+			legend{
+				width:10%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div style="margin: 15px;">
+			<fieldset class="layui-elem-field">
+  				<legend>编辑广告</legend>
+				<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+					<div class="layui-tab-content" >
+						<!-- 基础设置 开始-->
+						<form class="layui-form  layui-form-pane" action="" id="form">
+							<div class="layui-form-item">
+							    <label class="layui-form-label">广告标题</label>
+							    <div class="layui-input-inline">
+							      <input type="text" name="name" value="{$info['name']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">Appid</label>
+							    <div class="layui-input-inline">
+							      <input type="text" name="appid" value="{$info['appid']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">路径</label>
+							    <div class="layui-input-inline">
+							      <input type="text" name="path" value="{$info['path']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">描述</label>
+							    <div class="layui-input-inline">
+							      <input type="text" name="desc" value="{$info['desc']}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-form-danger">
+							    </div>
+							</div>
+							<input type="hidden" name="id" value="{$info['id']}" >
+							<div class="layui-form-item">
+							    <div class="layui-input-block">
+							      <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="rankadd" style="pointer-events: auto;">立即提交</button>
+							      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+							    </div>
+							</div>
+
+							</form>
+						<!-- 题目设置 结束-->
+					</div>
+				</div>
+			</fieldset>
+		</div>
+
+		<script type="text/javascript" src="/addons/hc_answer/template/plugins/layui/layui.js"></script>
+		<script>
+			layui.use(['form','upload','laypage','layer'], function() {
+				var $ = layui.jquery,
+				upload = layui.upload,
+				form = layui.form();
+				form.render();
+
+				
+				form.on('submit(rankadd)', function(data) {
+					$.ajax({
+			            url:"{php echo $this->createWebUrl('advdo');php}",
+			            data:$('#form').serialize(),
+			            type:"post",
+			            dataType:"json",
+			            success:function(data){
+			            	if(data.code=='1'){
+			                	layer.alert(data.msg, {icon: 6},function(index){
+			                		var index = parent.layer.getFrameIndex(window.name);
+			                		parent.layer.close(index)
+			                	});
+								
+			            	}else{
+			                	layer.alert(data.msg, {icon: 5});
+			            	}
+			            },
+			            error:function(data){
+			                layer.alert('请稍后重试', {icon: 5});
+			            }
+			        });
+					return false;
+				});
+
+			});
+		</script>
+
+	</body>
+
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Table</title>
+		<link rel="stylesheet" href="/addons/hc_answer/template/plugins/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/global.css" media="all">
+		<link rel="stylesheet" type="text/css" href="/addons/hc_answer/template/plugins/font-awesome/css/font-awesome.css">
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/table.css" />
+	</head>
+	<body>
+		<div class="admin-main">
+			<blockquote class="layui-elem-quote">
+				<div class="layui-inline">
+					<select name="quiz" class="layui-input" id="cate_id">
+						<option value="">全部分类</option>
+						{loop $cate $item}
+						<optgroup label="{$item['name']}">
+						{loop $item['children'] $v}
+							<option value="{$v['id']}" {if $v['id'] == $cate_id}selected="selected"{/if}>{$v['name']}</option>
+						{/loop}
+						</optgroup>
+						{/loop}
+					</select>
+				</div>
+				<div class="layui-inline">
+					<select name="quiz" class="layui-input" id="easy">
+						<option value="">全部难度</option>
+						<optgroup label="难易度">
+							<option value="1" {if $easy == 1}selected="selected"{/if}>简单</option>
+							<option value="2" {if $easy == 2}selected="selected"{/if}>一般</option>
+							<option value="3" {if $easy == 3}selected="selected"{/if}>复杂</option>
+						</optgroup>
+					</select>
+				</div>
+				<div class="layui-inline">
+					<select name="quiz" class="layui-input" id="type">
+						<option value="">是否选择</option>
+						<option value="1" {if $type == 1}selected="selected"{/if}>已选</option>
+						<option value="2" {if $type == 2}selected="selected"{/if}>未选</option>
+					</select>
+				</div>
+				<div class="layui-inline">
+			    	<input type="text" class="layui-input" id="question" value="{$question}" placeholder="题目内容">
+			  	</div>
+			  	每页展示：
+			  	<div class="layui-inline">
+			    	<input type="number" class="layui-input" id="pagenum" value="{$pagesize}" style="width:50%">
+			  	</div>
+				<a href="javascript:;" class="layui-btn layui-btn-small" id="search">
+					<i class="layui-icon">&#xe615;</i> 搜索
+				</a>
+				<input type="hidden" id="questions" value="{$questions}">
+			</blockquote>
+			<blockquote class="layui-elem-quote">
+				1.“勾选”或者“取消勾选”每个分类下的每道题之后，必须点击“继续添加”按钮。
+				<br/>
+				2.“一键重置”按钮是“取消勾选”所有分类下的题目
+			</blockquote>
+			<fieldset class="layui-elem-field">
+				<legend>题目列表</legend>
+				<div class="layui-field-box">
+					<table class="site-table table-hover">
+						<thead>
+							<tr>
+								<th><input type="checkbox" id="selected-all"></th>
+								<th>题目编号</th>
+								<th>所属分类</th>
+								<th>题目</th>
+								<th>答案A</th>
+								<th>答案B</th>
+								<th>答案C</th>
+								<th>答案D</th>
+								<th>难易度</th>
+								<th>正确答案</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+						<tfoot>
+							<tr>
+								<th colspan="10">
+									<div id="page" class="page"></div>
+								</th>
+							</tr>
+				
+						</tfoot>
+					</table>
+
+				</div>
+			</fieldset>
+			<input type="hidden" id="qid" value="{$id}">
+		</div>
+		<script type="text/javascript" src="/addons/hc_answer/template/plugins/layui/layui.js"></script>
+		<script>
+			layui.config({
+				base: '/addons/hc_answer/template/plugins/layui/modules/'
+			});
+			var callbackdata = function (){
+				return document.getElementById("questions").value;
+	        }
+			layui.use(['icheck', 'laypage','layer'], function() {
+				var $ = layui.jquery,
+					laypage = layui.laypage;
+				$('input').iCheck({
+					checkboxClass: 'icheckbox_flat-green'
+				});
+				//page
+				laypage({
+					cont: 'page',
+					pages: {$nums},
+					groups: 0,
+				    first: false,
+				    last: false,
+				    prev:false,
+				    next:'加载更多',
+					jump: function(obj, first) {
+						//得到了当前页，用于向服务端请求对应数据
+						var curr = obj.curr;
+						var cate_id = $("#cate_id").val();
+						var question= $("#question").val();
+						var easy = $("#easy").val();
+						var qid = $("#qid").val();
+						var pagenum = $("#pagenum").val();
+						var type = $("#type").val();
+						var html ='';
+						$.ajax({
+				            url:"{php echo $this->createWebUrl('selectlibajax');php}",
+				            data:{page:curr,cate_id:cate_id,question:question,easy:easy,id:qid,pagenum:pagenum,type:type},
+				            type:"post",
+				            dataType:"json",
+				            success:function(data){
+				            	layui.each(data.data, function(index, item){
+				            		html += '<tr ';
+				            		if(item.status==1){
+				            			html += 'style="background-color:#EDEDED"';
+				            		}
+				            		html += '>';
+
+				            		html += '<td><input type="checkbox"';
+				            		if(item.status==1){
+				            			html += ' checked="checked" ';
+				            		}
+				            		html += ' name="ck" value="'+item.id+'"></td>';
+				            		html += '<td>'+item.id+'</td>';
+							      	html += '<td>'+item.type_id+'</td>';
+							      	html += '<td>'+item.question+'</td>';
+							      	html += '<td>'+item.answer_a+'</td>';
+							      	html += '<td>'+item.answer_b+'</td>';
+							      	html += '<td>'+item.answer_c+'</td>';
+							      	html += '<td>'+item.answer_d+'</td>';
+							      	html += '<td>'+item.easy+'</td>';
+							      	html += '<td>'+item.answer+'</td>';
+							      	html += '</tr>';
+							    });
+							    $("#qid").val(data.id);
+							    $("tbody").append(html);
+				            },
+				            error:function(data){
+				                layer.alert('请稍后重试', {icon: 5});
+				            }
+				        });
+						
+					}
+				});
+
+				$('#search').on('click', function() {
+					var cate_id = $("#cate_id").val();
+					var question= $("#question").val();
+					var easy = $("#easy").val();
+					var qid = $("#qid").val();
+					var pagenum = $("#pagenum").val();
+					var type = $("#type").val();
+					location.href='./index.php?c=site&a=entry&do=selectlib&m=hc_answer&cate_id='+cate_id+'&question='+question+'&easy='+easy+'&id='+qid+'&pagenum='+pagenum+'&type='+type
+				});
+				$('tbody').on('click', 'input[type=checkbox]',function() {
+					var hav = $("#questions").val()
+					var res = $(this).attr('value');
+					var havarr = hav.split(",");
+			  		var resarr = res.split(",");
+
+					if($(this).is(':checked')) {
+						if(hav==''){
+						    var newhav = res
+						}else{
+							var newhav = hav+','+res
+						}
+		  				$("#questions").val(newhav)
+					}else{
+		  				var diff = array_difference(havarr,resarr);
+			  			$("#questions").val(diff)
+					}
+				})
+				function array_intersection(a, b) { // 交集
+				    var result = [];
+				    for(var i = 0; i < b.length; i ++) {
+				        var temp = b[i];
+				        for(var j = 0; j < a.length; j ++) {
+				            if(temp === a[j]) {
+				                result.push(temp);
+				                break;
+				            }
+				        }
+				    }
+				    return array_remove_repeat(result);
+				}
+				function array_difference(a, b) { // 差集 a - b
+				    //clone = a
+				    var clone = a.slice(0);
+				    for(var i = 0; i < b.length; i ++) {
+				        var temp = b[i];
+				        for(var j = 0; j < clone.length; j ++) {
+				            if(temp === clone[j]) {
+				                //remove clone[j]
+				                clone.splice(j,1);
+				            }
+				        }
+				    }
+				    return array_remove_repeat(clone);
+				}
+				function array_remove_repeat(a) { // 去重
+				    var r = [];
+				    for(var i = 0; i < a.length; i ++) {
+				        var flag = true;
+				        var temp = a[i];
+				        for(var j = 0; j < r.length; j ++) {
+				            if(temp === r[j]) {
+				                flag = false;
+				                break;
+				            }
+				        }
+				        if(flag) {
+				            r.push(temp);
+				        }
+				    }
+				    return r;
+				}
+				$('.site-table tbody tr').on('click', function(event) {
+					var $this = $(this);
+					var $input = $this.children('td').eq(0).find('input');
+					$input.on('ifChecked', function(e) {
+						$this.css('background-color', '#EEEEEE');
+					});
+					$input.on('ifUnchecked', function(e) {
+						$this.removeAttr('style');
+					});
+					$input.iCheck('toggle');
+				}).find('input').each(function() {
+					var $this = $(this);
+					$this.on('ifChecked', function(e) {
+						$this.parents('tr').css('background-color', '#EEEEEE');
+					});
+					$this.on('ifUnchecked', function(e) {
+						$this.parents('tr').removeAttr('style');
+					});
+				});
+				$('#selected-all').on('ifChanged', function(event) {
+					var $input = $('.site-table tbody tr td').find('input');
+					if(event.currentTarget.checked){
+						$input.iCheck('check');
+
+						var ckstr=[];
+						$('input[name="ck"]').each(function(){ 
+								ckstr.push($(this).val());
+						});
+						var ques = $("#questions").val();
+						var newquesarr = ques.split(",");
+
+						var diff = array_difference(ckstr,newquesarr);
+						if(ques==''){
+							var newhav = diff
+						}else{
+							var newhav = ques+','+diff
+						}
+					}else{
+						$input.iCheck('uncheck');
+
+						var ckstr=[];
+						$('input[name="ck"]').each(function(){ 
+								ckstr.push($(this).val());
+						});
+						var ques = $("#questions").val();
+						var newquesarr = ques.split(",");
+
+						var newhav = array_difference(newquesarr,ckstr);
+					}
+
+	  				$("#questions").val(newhav);
+				});
+			});
+		</script>
+	</body>
+

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Table</title>
+		<link rel="stylesheet" href="/addons/hc_answer/template/plugins/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/global.css" media="all">
+		<link rel="stylesheet" type="text/css" href="/addons/hc_answer/template/plugins/font-awesome/css/font-awesome.css">
+		<link rel="stylesheet" href="/addons/hc_answer/template/css/table.css" />
+	</head>
+	<body>
+		<div class="admin-main">
+
+			<blockquote class="layui-elem-quote">
+				设置用户等级及用户升级条件<br>
+				注意：编辑完成后，记得点击下方的保存按钮哦<br>
+				<a href="javascript:;" class="layui-btn layui-btn-small" id="refresh">
+					<i class="layui-icon">&#x1002;</i> 刷新
+				</a>
+			</blockquote>
+			<fieldset class="layui-elem-field">
+				<legend>等级设置</legend>
+				<div class="layui-field-box">
+					<table class="layui-table" style="width:50%">
+						<thead>
+							<tr>
+								<th style="text-align: center">等级编号</th>
+								<th style="text-align: center">等级名称</th>
+								<th style="text-align: center">升级所需经验</th>
+								<th style="text-align: center">操作</th>
+							</tr>
+						</thead>
+						<tbody id="table1">
+						{loop $list $item}
+							<tr>
+								<td><input type="text" name="no" value="{$item['levelno']}" class="layui-input"/></td>
+								<td><input type="text" name="name" value="{$item['levelname']}" class="layui-input"/></td>
+								<td><input type="text" name="exp" value="{$item['levelexp']}" class="layui-input"/></td>
+								<th>
+									<a href="javascript:;" class="layui-btn layui-btn-danger layui-btn-mini delete" data-id="{$item['id']}">删除</a>
+								</th>
+							</tr>
+						{/loop}
+						</tbody>
+						<tfoot>
+							<td colspan="3">
+								<a href="javascript:;" class="layui-btn layui-btn-small" id="add">
+									<i class="layui-icon">&#xe608;</i> 添加一行
+								</a>
+							</td>
+							<td>
+								<button class="layui-btn layui-btn-normal layui-btn-small" id="insert" >保存</button>
+							</td>
+						</tfoot>
+					</table>
+				</div>
+			</fieldset>
+
+		</div>
+		<script type="text/javascript" src="/addons/hc_answer/template/plugins/layui/layui.js"></script>
+		<script>
+			layui.config({
+				base: '/addons/hc_answer/template/plugins/layui/modules/'
+			});
+
+			layui.use(['icheck','form', 'laypage','layer'], function() {
+				var $ = layui.jquery;
+				$("#insert").click(function(){
+					var arr = [];
+					$("input[name='no']").each(function(e){
+						var no   = $(this).val()
+						var name = $(this).parent().parent().find("input[name='name']").val()
+						var exp  = $(this).parent().parent().find("input[name='exp']").val()
+						var obj = {
+					        no: no,
+					        name: name,
+					        exp : exp
+					    };
+						arr.push(obj)
+					})
+					$.ajax({
+			            url:"{php echo $this->createWebUrl('gradedo');php}",
+			            data:{level:JSON.stringify(arr)},
+			            type:"post",
+			            dataType:"json",
+			            success:function(data){
+			            	console.log(arr)
+			            	if(data.code=='1'){
+			                	layer.alert(data.msg, {icon: 6},function(){
+			                		location.reload();
+			                	});
+			            	}else{
+			                	layer.alert(data.msg, {icon: 5});
+			            	}
+			            },
+			            error:function(data){
+			                layer.alert('请稍后重试', {icon: 5});
+			            }
+			        });
+				});
+				$('#refresh').on('click', function() {
+					location.reload();
+				});
+
+				$("#add").click(function(){
+					var tr='<tr>';
+					tr+= '<td class="layui-input-block"><input type="text" name="no" class="layui-input"/></td>';
+					tr+= '<td class="layui-input-block"><input type="text" name="name" class="layui-input"/></td>';
+					tr+= '<td class="layui-input-block"><input type="text" name="exp" class="layui-input"/></td>';
+					tr+= '<td>';
+					tr+= '<a href="javascript:;" class="layui-btn layui-btn-danger layui-btn-mini delete" >删除</a>';
+					tr+= '</td></tr>';
+　  　				
+					$("#table1").append(tr);　
+			    });
+
+			    $("table").on('click','.delete',function(){
+			    	var id = $(this).attr('data-id');
+			    	if(id != undefined){
+				    	layer.confirm('确定要删除吗？', {
+							btn: ['确认','取消'],
+							end: function () {
+						        location.reload();
+						    }
+						}, function(){
+							$.ajax({
+					            url:"{php echo $this->createWebUrl('gradedo');php}",
+					            data:{id:id,act:'del'},
+					            type:"post",
+					            dataType:"json",
+					            success:function(data){
+					            	if(data.code=='1'){
+					                	layer.alert(data.msg, {icon: 6});
+					            	}else{
+					                	layer.alert(data.msg, {icon: 5});
+					            	}
+					            },
+					            error:function(data){
+					                layer.alert('请稍后重试', {icon: 5});
+					            }
+					        });
+						})
+				    }else{
+				    	$(this).parent().parent().remove();
+				    }
+			    });
+			});
+		</script>
+	</body>
+
+</html>
